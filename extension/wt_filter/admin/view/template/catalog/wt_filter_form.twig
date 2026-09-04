@@ -1,0 +1,179 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-wt-filter" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+        <a href="{{ cancel }}" data-bs-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> {{ error_warning }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endif %}
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_form }}</div>
+      <div class="card-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-wt-filter">
+          <ul class="nav nav-tabs mb-3">
+            <li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">{{ tab_general }}</a></li>
+            <li class="nav-item"><a href="#tab-values" data-bs-toggle="tab" class="nav-link">{{ tab_values }}</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab-general">
+              <div class="row mb-3 required">
+                <label class="col-sm-2 col-form-label">{{ entry_name }}</label>
+                <div class="col-sm-10">
+                  {% for language in languages %}
+                    <div class="input-group mb-2">
+                      <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}" alt="{{ language.name }}"/></div>
+                      <input type="text" name="option_description[{{ language.language_id }}][name]" value="{{ option_description[language.language_id] ? option_description[language.language_id].name : '' }}" class="form-control"/>
+                    </div>
+                    {% if error_name[language.language_id] is defined %}
+                      <div class="text-danger">{{ error_name[language.language_id] }}</div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-keyword">{{ entry_keyword }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="keyword" value="{{ keyword }}" id="input-keyword" class="form-control"/>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_category }}</label>
+                <div class="col-sm-10">
+                  <div class="border rounded p-2 bg-light wt-filter-categories" style="height: 200px; overflow: auto;">
+                    {% for category in categories %}
+                      <div class="form-check">
+                        <input type="checkbox" name="category_id[]" value="{{ category.category_id }}" class="form-check-input" id="cat-{{ category.category_id }}"{% if category.category_id in option_categories %} checked{% endif %}/>
+                        <label class="form-check-label" for="cat-{{ category.category_id }}">{{ category.name }}</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  <a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', true); return false;">{{ text_select_all }}</a>
+                  /
+                  <a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', false); return false;">{{ text_unselect_all }}</a>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-type">{{ entry_type }}</label>
+                <div class="col-sm-10">
+                  <select name="type" id="input-type" class="form-select">
+                    {% for key, value in types %}
+                      <option value="{{ key }}"{% if type == key %} selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                  </select>
+                  <div class="form-check mt-2">
+                    <input type="checkbox" name="color" value="1" class="form-check-input" id="input-color"{% if color %} checked{% endif %}/>
+                    <label class="form-check-label" for="input-color">{{ entry_is_color }}</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-sort-order">{{ entry_sort_order }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="sort_order" value="{{ sort_order }}" id="input-sort-order" class="form-control"/>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+                <div class="col-sm-10">
+                  <div class="form-check">
+                    <input type="checkbox" name="status" value="1" class="form-check-input" id="input-status"{% if status %} checked{% endif %}/>
+                    <label class="form-check-label" for="input-status">{{ text_enabled }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="tab-values">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-start">{{ column_image }}</td>
+                      <td class="text-start">{{ column_name }}</td>
+                      <td class="text-start">{{ column_keyword }}</td>
+                      <td class="text-start">{{ column_color }}</td>
+                      <td class="text-end">{{ column_numeric }}</td>
+                      <td class="text-end">{{ entry_sort_order }}</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if values %}
+                      {% for value in values %}
+                        <tr>
+                          <td class="text-start">
+                            <a href="" id="thumb-image-{{ value.value_id }}" data-oc-toggle="image" class="img-thumbnail wt-filter-value-thumb">
+                              <span class="wt-filter-value-swatch{% if value.color %} is-color{% endif %}"{% if value.color %} style="background:{{ value.color }}"{% endif %}>
+                                <img src="{{ value.thumb }}" alt="" data-placeholder="{{ placeholder }}"/>
+                              </span>
+                            </a>
+                            <input type="hidden" name="value[{{ value.value_id }}][image]" value="{{ value.image }}" id="input-image-{{ value.value_id }}"/>
+                          </td>
+                          <td class="text-start">{{ value.name }}</td>
+                          <td class="text-start">{{ value.keyword }}</td>
+                          <td class="text-start" style="max-width:120px;">
+                            <input type="text" name="value[{{ value.value_id }}][color]" value="{{ value.color }}" class="form-control wt-filter-value-color" placeholder="#rrggbb"/>
+                          </td>
+                          <td class="text-end">{{ value.value_numeric is not null and value.value_numeric != '' ? value.value_numeric : '—' }}</td>
+                          <td class="text-end">{{ value.sort_order }}</td>
+                        </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr><td class="text-center" colspan="6">—</td></tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <p class="form-text">{{ help_value_image }}</p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function ($) {
+  function parseHex(val) {
+    var m = String(val || '').trim().match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (!m) return '';
+    var h = m[1];
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    return '#' + h.toLowerCase();
+  }
+
+  function applySwatch($row) {
+    var hex = parseHex($row.find('.wt-filter-value-color').val());
+    var $swatch = $row.find('.wt-filter-value-swatch');
+    var $img = $swatch.find('img');
+    if (hex) {
+      $swatch.css('background', hex).addClass('is-color');
+      $img.css('visibility', 'hidden');
+    } else {
+      $swatch.css('background', '').removeClass('is-color');
+      $img.css('visibility', 'visible');
+    }
+  }
+
+  $(document).on('input change', '.wt-filter-value-color', function () {
+    applySwatch($(this).closest('tr'));
+  });
+
+  $('#tab-values tbody tr').each(function () {
+    applySwatch($(this));
+  });
+})(jQuery);
+</script>
+{{ footer }}

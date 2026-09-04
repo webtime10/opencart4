@@ -1,0 +1,997 @@
+{#
+  Шаблон настроек модуля WT Filter (Extensions → Modules → WT Filter).
+  Две вкладки:
+    tab-general — статус модуля + разделитель атрибутов (сохраняется кнопкой Save)
+    tab-copy    — параметры копирования + AJAX-прогресс (кнопка «Копировать»)
+#}
+{{ header }}{{ column_left }}
+<div id="content">
+  {# Шапка страницы: Save / Cancel #}
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        {# Submit формы form-module → сохранение настроек модуля #}
+        <a href="#tab-seo" class="btn btn-success" id="button-seo-pages-top"><i class="fa-solid fa-globe"></i> {{ tab_seo }}</a>
+        <a href="{{ catalog_list }}" class="btn btn-light"><i class="fa-solid fa-list"></i> {{ text_catalog_list }}</a>
+        <button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+        <a href="{{ cancel }}" data-bs-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {# Flash-сообщения после редиректа (ошибка / успех сохранения) #}
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> {{ error_warning }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> {{ success }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card-header">
+        <i class="fa-solid fa-pencil"></i> {{ text_edit }}
+      </div>
+      <div class="card-body">
+        {# Форма настроек: action = route модуля модуля (POST save) #}
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module">
+
+          {# Переключатель вкладок #}
+          <ul class="nav nav-tabs mb-3">
+            <li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">{{ tab_general }}</a></li>
+            <li class="nav-item"><a href="#tab-copy" data-bs-toggle="tab" class="nav-link">{{ tab_copy }}</a></li>
+            <li class="nav-item"><a href="#tab-seo" data-bs-toggle="tab" class="nav-link" id="tab-seo-link">{{ tab_seo }}</a></li>
+          </ul>
+
+          <div class="tab-content">
+
+            {# ========== Вкладка «Общие»: настройки, которые сохраняются в setting ========== #}
+            <div class="tab-pane active" id="tab-general">
+              {# Вкл/выкл модуля #}
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+                <div class="col-sm-10">
+                  <select name="module_wt_filter_status" id="input-status" class="form-select">
+                    {% if module_wt_filter_status %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+                </div>
+              </div>
+
+              {# Разделитель составных атрибутов (по умолчанию ","): «Красный, Синий» → 2 значения при копировании #}
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-attribute-separator">{{ entry_attribute_separator }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="module_wt_filter_attribute_separator" value="{{ module_wt_filter_attribute_separator }}" placeholder="," id="input-attribute-separator" class="form-control" />
+                  <p class="form-text">{{ help_attribute_separator }}</p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-price-special">{{ entry_price_special }}</label>
+                <div class="col-sm-10">
+                  <select name="module_wt_filter_price_special" id="input-price-special" class="form-select">
+                    {% if module_wt_filter_price_special %}
+                    <option value="1" selected="selected">{{ text_price_special_yes }}</option>
+                    <option value="0">{{ text_price_special_no }}</option>
+                    {% else %}
+                    <option value="1">{{ text_price_special_yes }}</option>
+                    <option value="0" selected="selected">{{ text_price_special_no }}</option>
+                    {% endif %}
+                  </select>
+                  <p class="form-text">{{ help_price_special }}</p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-discount">{{ entry_discount }}</label>
+                <div class="col-sm-10">
+                  <select name="module_wt_filter_discount" id="input-discount" class="form-select">
+                    {% if module_wt_filter_discount %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+                  <p class="form-text">{{ help_discount }}</p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_group_expanded }}</label>
+                <div class="col-sm-10">
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-sm" style="max-width:420px;margin-bottom:8px;">
+                      <thead>
+                        <tr>
+                          <th>{{ column_group_name }}</th>
+                          <th class="text-center">{{ column_expanded_desktop }}</th>
+                          <th class="text-center">{{ column_expanded_mobile }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{{ text_group_price }}</td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[p][desktop]" value="1"{% if module_wt_filter_group_expanded.p.desktop %} checked{% endif %}/></td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[p][mobile]" value="1"{% if module_wt_filter_group_expanded.p.mobile %} checked{% endif %}/></td>
+                        </tr>
+                        <tr>
+                          <td>{{ text_group_manufacturer }}</td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[m][desktop]" value="1"{% if module_wt_filter_group_expanded.m.desktop %} checked{% endif %}/></td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[m][mobile]" value="1"{% if module_wt_filter_group_expanded.m.mobile %} checked{% endif %}/></td>
+                        </tr>
+                        <tr>
+                          <td>{{ text_group_stock }}</td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[s][desktop]" value="1"{% if module_wt_filter_group_expanded.s.desktop %} checked{% endif %}/></td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[s][mobile]" value="1"{% if module_wt_filter_group_expanded.s.mobile %} checked{% endif %}/></td>
+                        </tr>
+                        <tr>
+                          <td>{{ text_group_discount }}</td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[d][desktop]" value="1"{% if module_wt_filter_group_expanded.d.desktop %} checked{% endif %}/></td>
+                          <td class="text-center"><input type="checkbox" class="form-check-input" name="module_wt_filter_group_expanded[d][mobile]" value="1"{% if module_wt_filter_group_expanded.d.mobile %} checked{% endif %}/></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="form-text">{{ help_group_expanded }}</p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-show-counts">{{ entry_show_counts }}</label>
+                <div class="col-sm-10">
+                  <select name="module_wt_filter_show_counts" id="input-show-counts" class="form-select">
+                    {% if module_wt_filter_show_counts %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+                  <p class="form-text">{{ help_show_counts }}</p>
+                </div>
+              </div>
+
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-accent-color">{{ entry_accent_color }}</label>
+                <div class="col-sm-10">
+                  <div class="input-group" style="max-width:280px;">
+                    <span class="input-group-text" style="padding:3px 6px;">
+                      <input type="color" id="input-accent-color-picker" value="{{ module_wt_filter_accent_color }}" style="width:42px;height:28px;padding:0;border:0;background:transparent;cursor:pointer;" />
+                    </span>
+                    <input type="text" name="module_wt_filter_accent_color" value="{{ module_wt_filter_accent_color }}" placeholder="#229ac8" id="input-accent-color" class="form-control" maxlength="7" autocomplete="off" />
+                  </div>
+                  <p class="form-text">{{ help_accent_color }}</p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-seo-text-position">{{ entry_seo_text_position }}</label>
+                <div class="col-sm-10">
+                  <select name="module_wt_filter_seo_text_position" id="input-seo-text-position" class="form-select">
+                    {% if module_wt_filter_seo_text_position == 'below' %}
+                    <option value="above">{{ text_seo_text_above }}</option>
+                    <option value="below" selected="selected">{{ text_seo_text_below }}</option>
+                    {% else %}
+                    <option value="above" selected="selected">{{ text_seo_text_above }}</option>
+                    <option value="below">{{ text_seo_text_below }}</option>
+                    {% endif %}
+                  </select>
+                  <p class="form-text">{{ help_seo_text_position }}</p>
+                </div>
+              </div>
+            </div>
+
+            {# ========== Вкладка «Копирование»: не сохраняется Save'ом, уходит AJAX'ом в copyFilters ========== #}
+            <div class="tab-pane" id="tab-copy">
+
+              {# Магазины, в которые привязать характеристики (copy_store[] → finalize) #}
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_store }}</label>
+                <div class="col-sm-10">
+                  <div class="border rounded p-2 bg-light" style="height: 100px; overflow: auto;">
+                    <div class="form-check">
+                      <input type="checkbox" name="copy_store[]" value="0" checked class="form-check-input" id="copy-store-0"/>
+                      <label class="form-check-label" for="copy-store-0">{{ text_default }}</label>
+                    </div>
+                    {% for store in stores %}
+                    <div class="form-check">
+                      <input type="checkbox" name="copy_store[]" value="{{ store.store_id }}" class="form-check-input" id="copy-store-{{ store.store_id }}"/>
+                      <label class="form-check-label" for="copy-store-{{ store.store_id }}">{{ store.name }}</label>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+              {# Тип UI фильтра в словаре: checkbox / radio / select #}
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="input-copy-type">{{ entry_type }}</label>
+                <div class="col-sm-10">
+                  <select name="copy_type" id="input-copy-type" class="form-select">
+                    {% for type in types %}
+                    <option value="{{ type }}">{{ type|capitalize }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              {# Перед копированием очистить все wt_filter_* (шаг truncate) #}
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_copy_truncate }}</label>
+                <div class="col-sm-10">
+                  <div class="form-check"><input type="checkbox" name="copy_truncate" value="1" id="input-copy_truncate" class="form-check-input"/><label class="form-check-label" for="input-copy_truncate">{{ text_yes }}</label></div>
+                </div>
+              </div>
+
+              {# Источники данных для копирования (какие шаги добавить в очередь) #}
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_copy_attribute }}</label>
+                <div class="col-sm-10">
+                  <div class="form-check"><input type="checkbox" name="copy_attribute" value="1" id="input-copy_attribute" class="form-check-input"/><label class="form-check-label" for="input-copy_attribute">{{ text_yes }}</label></div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_copy_filter }}</label>
+                <div class="col-sm-10">
+                  <div class="form-check"><input type="checkbox" name="copy_filter" value="1" id="input-copy_filter" class="form-check-input"/><label class="form-check-label" for="input-copy_filter">{{ text_yes }}</label></div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">{{ entry_copy_option }}</label>
+                <div class="col-sm-10">
+                  <div class="form-check"><input type="checkbox" name="copy_option" value="1" id="input-copy_option" class="form-check-input"/><label class="form-check-label" for="input-copy_option">{{ text_yes }}</label></div>
+                </div>
+              </div>
+
+              {# Сверху Copy (первый раз), снизу Update (уже есть данные) #}
+              <div class="row mb-3">
+                <div class="offset-sm-2 col-sm-10">
+                  <button type="button" id="button-copy-filter" class="btn btn-primary btn-lg" data-loading-text="{{ text_loading }}"><i class="fa-solid fa-copy"></i> {{ button_copy }}</button>
+                  <p class="form-text" style="margin-top:8px; margin-bottom:18px;">{{ help_copy_btn }}</p>
+
+                  <button type="button" id="button-update-filter" class="btn btn-success btn-lg" data-loading-text="{{ text_loading }}"><i class="fa-solid fa-rotate"></i> {{ button_update }}</button>
+                  <p class="form-text" style="margin-top:8px; margin-bottom:8px;">{{ help_update_btn }}</p>
+
+                  <p class="text-muted" style="margin-top:12px;"><small>{{ help_copy }}</small></p>
+                </div>
+              </div>
+
+              {# Прогресс-бар (показывается только во время копирования) #}
+              <div class="row mb-3" id="copy-progress-wrap" style="display:none;">
+                <div class="offset-sm-2 col-sm-10">
+                  <div class="progress" style="margin-bottom:8px;">
+                    <div id="copy-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%; min-width:2em;">0%</div>
+                  </div>
+                  <p id="copy-progress-text" class="text-muted" style="margin:0;">{{ text_loading }}</p>
+                </div>
+              </div>
+            </div>
+
+            {# ========== Вкладка «SEO Страницы»: AJAX CRUD посадочных ========== #}
+            <div class="tab-pane" id="tab-seo">
+              <div class="row mb-3">
+                <div class="col-sm-12">
+                  <div class="clearfix" style="margin-bottom:15px;">
+                    <div class="float-end">
+                      <button type="button" class="btn btn-light" id="button-seo-import"><i class="fa-solid fa-upload"></i> {{ button_seo_import }}</button>
+                      <button type="button" class="btn btn-primary" id="button-seo-add"><i class="fa-solid fa-plus"></i> {{ button_seo_add }}</button>
+                    </div>
+                    <h4 style="margin:0;line-height:34px;">{{ text_seo_list }}</h4>
+                  </div>
+                  <div id="seo-alert"></div>
+                  <div class="table-responsive" style="width:100%;clear:both;">
+                    <table class="table table-bordered table-hover" id="seo-pages-table" style="width:100%;">
+                      <thead>
+                        <tr>
+                          <th>{{ column_seo_url }}</th>
+                          <th>{{ column_seo_h1 }}</th>
+                          <th class="text-center" style="width:110px;">{{ column_seo_status }}</th>
+                          <th class="text-end" style="width:120px;">{{ column_seo_action }}</th>
+                        </tr>
+                      </thead>
+                      <tbody id="seo-pages-body">
+                        <tr><td colspan="4" class="text-center">{{ text_loading }}</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div id="seo-pagination" class="text-center"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal SEO page form #}
+<div class="modal fade" id="modal-seo-page" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-seo-title">{{ text_seo_add }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="seo-form-alert"></div>
+        <form id="form-seo-page">
+          <input type="hidden" name="seo_page_id" id="input-seo-page-id" value="0" />
+          <div class="row mb-3 required">
+            <label class="col-sm-3 col-form-label" for="input-seo-url">{{ entry_seo_url }}</label>
+            <div class="col-sm-9">
+              <input type="text" name="url" id="input-seo-url" class="form-control" placeholder="https://site.com/adidas/czvet:red/ або /apparel/topwear/razmer:41/" />
+              <p class="form-text">{{ help_seo_url }}</p>
+              <div id="seo-url-preview" class="border rounded p-2 bg-light" style="margin-top:10px;margin-bottom:0;">
+                <div class="text-muted" id="seo-preview-empty">{{ text_seo_preview_empty }}</div>
+                <div id="seo-preview-body" style="display:none;">
+                  <div><strong id="seo-preview-scope-label"></strong>: <span id="seo-preview-scope-name"></span></div>
+                  <div style="margin-top:6px;"><strong>{{ text_seo_preview }}</strong></div>
+                  <ul id="seo-preview-facets" style="margin:6px 0 8px 18px;padding:0;"></ul>
+                  <div><code id="seo-preview-url" style="white-space:normal;word-break:break-all;"></code></div>
+                  <div style="margin-top:8px;">
+                    <a href="#" id="seo-preview-open" target="_blank" rel="noopener" class="btn btn-light btn-sm"><i class="fa-solid fa-up-right-from-square"></i> {{ text_seo_open_site }}</a>
+                  </div>
+                  <div id="seo-preview-conflict" class="alert alert-warning" style="margin:10px 0 0;display:none;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3 required">
+            <label class="col-sm-3 col-form-label" for="input-seo-h1">{{ entry_seo_h1 }}</label>
+            <div class="col-sm-9">
+              <input type="text" name="h1" id="input-seo-h1" class="form-control" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="input-seo-meta-title">{{ entry_seo_meta_title }}</label>
+            <div class="col-sm-9">
+              <input type="text" name="meta_title" id="input-seo-meta-title" class="form-control" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="input-seo-meta-description">{{ entry_seo_meta_description }}</label>
+            <div class="col-sm-9">
+              <textarea name="meta_description" id="input-seo-meta-description" rows="3" class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="input-seo-meta-keyword">{{ entry_seo_meta_keyword }}</label>
+            <div class="col-sm-9">
+              <input type="text" name="meta_keyword" id="input-seo-meta-keyword" class="form-control" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="input-seo-description">{{ entry_seo_description }}</label>
+            <div class="col-sm-9">
+              <textarea name="description" id="input-seo-description" data-oc-toggle="ckeditor" class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="input-seo-status">{{ entry_status }}</label>
+            <div class="col-sm-9">
+              <select name="status" id="input-seo-status" class="form-select">
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ button_cancel }}</button>
+        <button type="button" class="btn btn-primary" id="button-seo-save"><i class="fa-solid fa-floppy-disk"></i> {{ button_save }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal mass SEO import #}
+<div class="modal fade" id="modal-seo-import" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ text_seo_import }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="seo-import-alert"></div>
+        <p class="form-text">{{ help_seo_import }}</p>
+        <textarea id="input-seo-import-urls" class="form-control" rows="12" placeholder="/footwear/flip-flops/razmer-obuvi:39/&#10;/obuv/brand:nike;razmer:42/"></textarea>
+        <div id="seo-import-result" style="margin-top:12px;display:none;">
+          <div class="table-responsive" style="max-height:220px;overflow:auto;">
+            <table class="table table-bordered table-sm" style="margin:0;">
+              <thead>
+                <tr>
+                  <th style="width:90px;">{{ column_seo_status }}</th>
+                  <th>{{ column_seo_url }}</th>
+                  <th>{{ column_seo_h1 }}</th>
+                </tr>
+              </thead>
+              <tbody id="seo-import-result-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ button_cancel }}</button>
+        <button type="button" class="btn btn-primary" id="button-seo-import-run"><i class="fa-solid fa-upload"></i> {{ button_seo_import_run }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+/**
+ * mode=copy  — по галочкам формы (можно truncate)
+ * mode=update — все источники, без truncate; типы/override не сбрасываются
+ */
+function wtFilterRunCopy(mode) {
+  var isUpdate = (mode === 'update');
+  var $button = isUpdate ? $('#button-update-filter') : $('#button-copy-filter');
+  var $other = isUpdate ? $('#button-copy-filter') : $('#button-update-filter');
+  var $wrap = $('#copy-progress-wrap');
+  var $bar = $('#copy-progress-bar');
+  var $text = $('#copy-progress-text');
+
+  $('#tab-copy > .alert-danger, #tab-copy > .alert-success').remove();
+
+  if (!$('input[name="copy_store[]"]:checked').length) {
+    $('#tab-copy').prepend('<div class="alert alert-danger"><i class="fa-solid fa-circle-exclamation"></i> {{ error_copy_store }}</div>');
+    return;
+  }
+
+  var useOption = isUpdate || $('input[name="copy_option"]:checked').length;
+  var useFilter = isUpdate || $('input[name="copy_filter"]:checked').length;
+  var useAttribute = isUpdate || $('input[name="copy_attribute"]:checked').length;
+
+  if (!useOption && !useFilter && !useAttribute) {
+    $('#tab-copy').prepend('<div class="alert alert-danger"><i class="fa-solid fa-circle-exclamation"></i> {{ error_copy_source }}</div>');
+    return;
+  }
+
+  var steps = [];
+
+  if (!isUpdate && $('input[name="copy_truncate"]:checked').length) {
+    steps.push('truncate');
+  }
+
+  if (useOption) steps.push('option');
+  if (useFilter) steps.push('filter');
+  if (useAttribute) steps.push('attribute');
+  steps.push('finalize');
+
+  var index = 0;
+  var total = steps.length;
+  var baseData = $('[name^=\'copy_\'], [name=\'module_wt_filter_attribute_separator\']').serialize();
+
+  // Update: явно без truncate + все источники в POST (для валидации/логов)
+  if (isUpdate) {
+    baseData = baseData.replace(/(^|&)copy_truncate=[^&]*/g, '');
+    if (baseData.indexOf('copy_option=') === -1) baseData += '&copy_option=1';
+    if (baseData.indexOf('copy_filter=') === -1) baseData += '&copy_filter=1';
+    if (baseData.indexOf('copy_attribute=') === -1) baseData += '&copy_attribute=1';
+  }
+
+  $button.prop('disabled', true);
+  $other.prop('disabled', true);
+  $wrap.show();
+  $bar.removeClass('bg-success bg-danger').addClass('progress-bar-animated').css('width', '0%').text('0%');
+  $text.text('{{ text_loading }}');
+
+  function setProgress(done, message) {
+    var percent = Math.round((done / total) * 100);
+    $bar.css('width', percent + '%').text(percent + '%');
+    if (message) $text.text(message);
+  }
+
+  function unlock() {
+    $button.prop('disabled', false);
+    $other.prop('disabled', false);
+  }
+
+  function runNext() {
+    if (index >= total) return;
+
+    var step = steps[index];
+
+    $.ajax({
+      url: 'index.php?route=extension/wt_filter/module/wt_filter.copyFilters&user_token={{ user_token }}',
+      type: 'post',
+      dataType: 'json',
+      data: baseData + '&step=' + encodeURIComponent(step),
+      success: function(json) {
+        if (json['error']) {
+          unlock();
+          $bar.removeClass('progress-bar-animated').addClass('bg-danger');
+          $text.text(json['error']);
+          $('#tab-copy').prepend('<div class="alert alert-danger"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + '</div>');
+          return;
+        }
+
+        index++;
+        setProgress(index, json['message'] || step);
+
+        if (json['complete'] || index >= total) {
+          unlock();
+          $bar.removeClass('progress-bar-animated').addClass('bg-success');
+          var doneMsg = isUpdate ? '{{ text_complete_update }}' : (json['message'] || '{{ text_complete }}');
+          $text.text(doneMsg);
+          $('#tab-copy').prepend('<div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> ' + doneMsg + '</div>');
+          return;
+        }
+
+        runNext();
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        unlock();
+        $bar.removeClass('progress-bar-animated').addClass('bg-danger');
+        $text.text(thrownError);
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  }
+
+  runNext();
+}
+
+$('#button-copy-filter').on('click', function() { wtFilterRunCopy('copy'); });
+$('#button-update-filter').on('click', function() { wtFilterRunCopy('update'); });
+
+/* ========== SEO Pages AJAX ========== */
+var wtSeoPage = 1;
+var wtSeoSummernoteReady = false;
+var wtSeoUrlList = '{{ seo_list|e('js') }}';
+var wtSeoUrlGet = '{{ seo_get|e('js') }}';
+var wtSeoUrlSave = '{{ seo_save|e('js') }}';
+var wtSeoUrlDelete = '{{ seo_delete|e('js') }}';
+var wtSeoUrlPreview = '{{ seo_preview|e('js') }}';
+var wtSeoUrlImport = '{{ seo_import|e('js') }}';
+var wtSeoPreviewTimer = null;
+var wtSeoPreviewXhr = null;
+
+function wtSeoClearPreview() {
+  $('#seo-preview-empty').show();
+  $('#seo-preview-body').hide();
+  $('#seo-preview-facets').empty();
+  $('#seo-preview-conflict').hide().empty();
+  $('#seo-preview-open').attr('href', '#');
+  $('#seo-preview-scope-label').text('');
+  $('#seo-preview-scope-name').text('');
+  $('#seo-preview-url').text('');
+}
+
+function wtSeoRenderPreview(preview) {
+  if (!preview) {
+    wtSeoClearPreview();
+    return;
+  }
+
+  $('#seo-preview-empty').hide();
+  $('#seo-preview-body').show();
+  $('#seo-preview-scope-label').text(preview.scope_label || '');
+  $('#seo-preview-scope-name').text(preview.scope_name || '');
+  $('#seo-preview-url').text(preview.url || '');
+  $('#seo-preview-open').attr('href', preview.href || '#');
+
+  var facetsHtml = '';
+  if (preview.facets && preview.facets.length) {
+    $.each(preview.facets, function(i, facet) {
+      facetsHtml += '<li><strong>' + $('<div>').text(facet.option || '').html() + ':</strong> '
+        + $('<div>').text(facet.values || '').html() + '</li>';
+    });
+  }
+  $('#seo-preview-facets').html(facetsHtml);
+
+  if (preview.conflict && preview.conflict.message) {
+    $('#seo-preview-conflict').show().text(preview.conflict.message);
+  } else {
+    $('#seo-preview-conflict').hide().empty();
+  }
+}
+
+function wtSeoFetchPreview() {
+  var url = $.trim($('#input-seo-url').val() || '');
+
+  if (!url) {
+    wtSeoClearPreview();
+    return;
+  }
+
+  if (wtSeoPreviewXhr && wtSeoPreviewXhr.readyState !== 4) {
+    wtSeoPreviewXhr.abort();
+  }
+
+  wtSeoPreviewXhr = $.ajax({
+    url: wtSeoUrlPreview,
+    type: 'post',
+    dataType: 'json',
+    data: {
+      url: url,
+      seo_page_id: $('#input-seo-page-id').val() || 0
+    },
+    success: function(json) {
+      if (!json || json.error) {
+        $('#seo-preview-empty').hide();
+        $('#seo-preview-body').show();
+        $('#seo-preview-scope-label').text('');
+        $('#seo-preview-scope-name').text('');
+        $('#seo-preview-facets').empty();
+        $('#seo-preview-url').text('');
+        $('#seo-preview-open').attr('href', '#');
+        $('#seo-preview-conflict').show().text((json && json.error) ? json.error : 'Error');
+        return;
+      }
+
+      wtSeoRenderPreview(json.preview);
+    }
+  });
+}
+
+function wtSeoSchedulePreview() {
+  clearTimeout(wtSeoPreviewTimer);
+  wtSeoPreviewTimer = setTimeout(wtSeoFetchPreview, 400);
+}
+
+
+function wtSeoAlert(type, message) {
+  $('#seo-alert').html(
+    '<div class="alert alert-' + type + ' alert-dismissible">' +
+    '<i class="fa fa-' + (type === 'success' ? 'check' : 'exclamation') + '-circle"></i> ' +
+    $('<div>').text(message || '').html() +
+    '<button type="button" class="close" data-bs-dismiss="alert">×</button></div>'
+  );
+}
+
+function wtSeoLoadList(page) {
+  wtSeoPage = page || 1;
+
+  $.ajax({
+    url: wtSeoUrlList + '&page=' + wtSeoPage,
+    dataType: 'json',
+    success: function(json) {
+      if (!json || json.error) {
+        wtSeoAlert('danger', (json && json.error) ? json.error : '{{ text_loading }}');
+        return;
+      }
+
+      var html = '';
+
+      if (!json.rows || !json.rows.length) {
+        html = '<tr><td colspan="4" class="text-center">{{ text_seo_empty|e('js') }}</td></tr>';
+      } else {
+        $.each(json.rows, function(i, row) {
+          html += '<tr>';
+          html += '<td><code style="white-space:normal;word-break:break-all;">' + $('<div>').text(row.url).html() + '</code></td>';
+          html += '<td>' + $('<div>').text(row.h1).html() + '</td>';
+          html += '<td class="text-center">' + (row.status ? '<span class="badge bg-success">' + row.status_text + '</span>' : '<span class="badge bg-secondary">' + row.status_text + '</span>') + '</td>';
+          html += '<td class="text-end">';
+          html += '<button type="button" class="btn btn-primary btn-sm button-seo-edit" data-id="' + row.seo_page_id + '"><i class="fa-solid fa-pencil"></i></button> ';
+          html += '<button type="button" class="btn btn-danger btn-sm button-seo-delete" data-id="' + row.seo_page_id + '"><i class="fa-solid fa-trash"></i></button>';
+          html += '</td></tr>';
+        });
+      }
+
+      $('#seo-pages-body').html(html);
+
+      var pag = '';
+      if (json.pages > 1) {
+        pag += '<ul class="pagination justify-content-center" style="margin:0;">';
+        for (var p = 1; p <= json.pages; p++) {
+          pag += '<li class="page-item' + (p === json.page ? ' active' : '') + '"><a href="#" class="page-link seo-page-link" data-page="' + p + '">' + p + '</a></li>';
+        }
+        pag += '</ul>';
+      }
+      $('#seo-pagination').html(pag);
+    },
+    error: function(xhr, status, err) {
+      var msg = err || status;
+      if (xhr && xhr.responseText && xhr.responseText.charAt(0) === '<') {
+        msg = 'AJAX returned HTML instead of JSON. Check user_token / permissions.';
+      }
+      wtSeoAlert('danger', msg);
+    }
+  });
+}
+
+function wtSeoInitEditor() {
+  var $el = $('#input-seo-description');
+  if (!$el.length) return false;
+  if (typeof $el.ckeditor === 'function' && !wtSeoSummernoteReady) {
+    try { $el.ckeditor(); wtSeoSummernoteReady = true; } catch (e) {}
+  }
+  return !!wtSeoSummernoteReady || !!(window.CKEDITOR && CKEDITOR.instances['input-seo-description']);
+}
+
+function wtSeoSetDescription(html) {
+  if (wtSeoInitEditor() && window.CKEDITOR && CKEDITOR.instances['input-seo-description']) {
+    CKEDITOR.instances['input-seo-description'].setData(html || '');
+  } else {
+    $('#input-seo-description').val(html || '');
+  }
+}
+
+function wtSeoResetForm() {
+  $('#input-seo-page-id').val('0');
+  $('#input-seo-url').val('');
+  $('#input-seo-h1').val('');
+  $('#input-seo-meta-title').val('');
+  $('#input-seo-meta-description').val('');
+  $('#input-seo-meta-keyword').val('');
+  $('#input-seo-status').val('1');
+  $('#seo-form-alert').empty();
+  $('#modal-seo-page').removeData('pending-description');
+  wtSeoClearPreview();
+
+  if (window.CKEDITOR && CKEDITOR.instances['input-seo-description']) {
+    CKEDITOR.instances['input-seo-description'].setData('');
+  } else {
+    $('#input-seo-description').val('');
+  }
+}
+
+$('#input-seo-url').on('input change blur', function() {
+  wtSeoSchedulePreview();
+});
+
+$('#tab-seo-link').on('shown.bs.tab', function() {
+  wtSeoLoadList(1);
+});
+
+function wtSeoOpenTab() {
+  var el=document.querySelector('#tab-seo-link'); if(el){ bootstrap.Tab.getOrCreateInstance(el).show(); }
+}
+
+$('#button-seo-pages-top').on('click', function(e) {
+  e.preventDefault();
+  wtSeoOpenTab();
+});
+
+// Открытие вкладки SEO по ?tab=seo (кнопка из списка фильтра)
+if (window.location.search.indexOf('tab=seo') !== -1 || window.location.hash === '#tab-seo') {
+  setTimeout(wtSeoOpenTab, 50);
+}
+
+$('#modal-seo-page').on('shown.bs.modal', function() {
+  var pending = $(this).data('pending-description');
+  wtSeoInitEditor();
+  if (typeof pending !== 'undefined') {
+    wtSeoSetDescription(pending);
+    $(this).removeData('pending-description');
+  }
+});
+
+$('#button-seo-add').on('click', function() {
+  wtSeoResetForm();
+  $('#modal-seo-title').text('{{ text_seo_add|e('js') }}');
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-seo-page')).show();
+});
+
+$('#button-seo-import').on('click', function() {
+  $('#input-seo-import-urls').val('');
+  $('#seo-import-alert').empty();
+  $('#seo-import-result').hide();
+  $('#seo-import-result-body').empty();
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-seo-import')).show();
+});
+
+$('#button-seo-import-run').on('click', function() {
+  var $btn = $(this);
+  var urls = $.trim($('#input-seo-import-urls').val() || '');
+
+  $('#seo-import-alert').empty();
+  $('#seo-import-result').hide();
+  $('#seo-import-result-body').empty();
+
+  if (!urls) {
+    $('#seo-import-alert').html('<div class="alert alert-danger">{{ error_seo_import_empty|e('js') }}</div>');
+    return;
+  }
+
+  $btn.prop('disabled', true);
+
+  $.ajax({
+    url: wtSeoUrlImport,
+    type: 'post',
+    dataType: 'json',
+    data: { urls: urls },
+    success: function(json) {
+      $btn.prop('disabled', false);
+
+      if (!json || json.error) {
+        $('#seo-import-alert').html('<div class="alert alert-danger">' + $('<div>').text((json && json.error) ? json.error : 'Error').html() + '</div>');
+        return;
+      }
+
+      var type = (json.created > 0) ? 'success' : 'warning';
+      $('#seo-import-alert').html('<div class="alert alert-' + type + '">' + $('<div>').text(json.message || '').html() + '</div>');
+
+      if (json.details && json.details.length) {
+        var html = '';
+        $.each(json.details, function(i, row) {
+          var label = row.status === 'created' ? 'success' : (row.status === 'skipped' ? 'warning' : 'danger');
+          var statusText = row.status === 'created' ? '{{ text_seo_import_created|e('js') }}'
+            : (row.status === 'skipped' ? '{{ text_seo_import_skipped|e('js') }}' : '{{ text_seo_import_error|e('js') }}');
+          html += '<tr>';
+          html += '<td><span class="badge bg-' + label + '">' + statusText + '</span></td>';
+          html += '<td><code style="white-space:normal;word-break:break-all;">' + $('<div>').text(row.url || '').html() + '</code></td>';
+          html += '<td>' + $('<div>').text(row.message || row.h1 || '').html() + '</td>';
+          html += '</tr>';
+        });
+        $('#seo-import-result-body').html(html);
+        $('#seo-import-result').show();
+      }
+
+      if (json.created > 0) {
+        wtSeoLoadList(1);
+        wtSeoAlert('success', json.message || '');
+      }
+    },
+    error: function(xhr, status, err) {
+      $btn.prop('disabled', false);
+      $('#seo-import-alert').html('<div class="alert alert-danger">' + $('<div>').text(err || status).html() + '</div>');
+    }
+  });
+});
+
+$(document).on('click', '.button-seo-edit', function() {
+  var id = $(this).data('id');
+
+  $.ajax({
+    url: wtSeoUrlGet + '&seo_page_id=' + id,
+    dataType: 'json',
+    success: function(json) {
+      if (!json || json.error) {
+        wtSeoAlert('danger', (json && json.error) ? json.error : 'Error');
+        return;
+      }
+
+      wtSeoResetForm();
+      $('#modal-seo-title').text('{{ text_seo_edit|e('js') }}');
+      $('#input-seo-page-id').val(json.page.seo_page_id);
+      $('#input-seo-url').val(json.page.url);
+      $('#input-seo-h1').val(json.page.h1);
+      $('#input-seo-meta-title').val(json.page.meta_title);
+      $('#input-seo-meta-description').val(json.page.meta_description);
+      $('#input-seo-meta-keyword').val(json.page.meta_keyword);
+      $('#input-seo-status').val(json.page.status ? '1' : '0');
+      $('#modal-seo-page').data('pending-description', json.page.description || '');
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-seo-page')).show();
+      wtSeoSchedulePreview();
+    }
+  });
+});
+
+$(document).on('click', '.button-seo-delete', function() {
+  if (!confirm('{{ text_seo_confirm_delete|e('js') }}')) {
+    return;
+  }
+
+  var id = $(this).data('id');
+
+  $.ajax({
+    url: wtSeoUrlDelete,
+    type: 'post',
+    dataType: 'json',
+    data: { seo_page_id: id },
+    success: function(json) {
+      if (!json || json.error) {
+        wtSeoAlert('danger', (json && json.error) ? json.error : 'Error');
+        return;
+      }
+      wtSeoAlert('success', json.message || '{{ text_seo_deleted|e('js') }}');
+      wtSeoLoadList(wtSeoPage);
+    }
+  });
+});
+
+$(document).on('click', '.seo-page-link', function(e) {
+  e.preventDefault();
+  wtSeoLoadList($(this).data('page'));
+});
+
+$('#button-seo-save').on('click', function() {
+  var $btn = $(this);
+  var description = (window.CKEDITOR && CKEDITOR.instances['input-seo-description'])
+    ? CKEDITOR.instances['input-seo-description'].getData()
+    : $('#input-seo-description').val();
+
+  $btn.prop('disabled', true);
+  $('#seo-form-alert').empty();
+
+  $.ajax({
+    url: wtSeoUrlSave,
+    type: 'post',
+    dataType: 'json',
+    data: {
+      seo_page_id: $('#input-seo-page-id').val(),
+      url: $('#input-seo-url').val(),
+      h1: $('#input-seo-h1').val(),
+      meta_title: $('#input-seo-meta-title').val(),
+      meta_description: $('#input-seo-meta-description').val(),
+      meta_keyword: $('#input-seo-meta-keyword').val(),
+      description: description,
+      status: $('#input-seo-status').val()
+    },
+    success: function(json) {
+      $btn.prop('disabled', false);
+
+      if (!json || json.error) {
+        $('#seo-form-alert').html('<div class="alert alert-danger">' + $('<div>').text((json && json.error) ? json.error : 'Error').html() + '</div>');
+        return;
+      }
+
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-seo-page')).hide();
+      wtSeoAlert('success', json.message || '{{ text_seo_saved|e('js') }}');
+      wtSeoLoadList(wtSeoPage);
+    },
+    error: function(xhr, status, err) {
+      $btn.prop('disabled', false);
+      $('#seo-form-alert').html('<div class="alert alert-danger">' + $('<div>').text(err || status).html() + '</div>');
+    }
+  });
+});
+
+(function() {
+  var $text = $('#input-accent-color');
+  var $picker = $('#input-accent-color-picker');
+
+  if (!$text.length || !$picker.length) {
+    return;
+  }
+
+  function normalizeHex(value) {
+    value = String(value || '').trim();
+
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value)) {
+      value = value.slice(1);
+    } else if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value)) {
+      return '';
+    }
+
+    value = value.toLowerCase();
+
+    if (value.length === 3) {
+      value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
+    }
+
+    return '#' + value;
+  }
+
+  $picker.on('input change', function() {
+    $text.val(this.value);
+  });
+
+  $text.on('input change blur', function() {
+    var hex = normalizeHex(this.value);
+
+    if (hex) {
+      $text.val(hex);
+      $picker.val(hex);
+    }
+  });
+})();
+
+//--></script>
+{{ footer }}

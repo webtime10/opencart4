@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  WT Filter OCMOD for OpenCart 4.x
+  In zip: ocmod/wt_filter.ocmod.xml
+
+  Menu = Event (module install), not this XML.
+  Controllers/models need namespace -> Extension\Ocmod\...
+-->
+<modification>
+  <name>WT Filter</name>
+  <code>wt_filter</code>
+  <version>1.0.1</version>
+  <author>WT</author>
+  <link></link>
+
+  <!-- Product form: assets + language vars -->
+  <file path="admin/controller/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA[namespace Opencart\Admin\Controller\Catalog;]]></search>
+      <add position="replace"><![CDATA[namespace Opencart\Admin\Controller\Extension\Ocmod\Catalog;]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[$this->document->addScript('view/javascript/ckeditor/adapters/jquery.js');
+
+		$data['text_form'] = !isset($this->request->get['product_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');]]></search>
+      <add position="replace"><![CDATA[$this->document->addScript('view/javascript/ckeditor/adapters/jquery.js');
+
+		// WT Filter
+		$this->document->addStyle('extension/wt_filter/admin/view/stylesheet/wt_filter/wt_filter.css');
+		$this->document->addScript('extension/wt_filter/admin/view/javascript/wt_filter/wt_filter.js');
+
+		$data['text_form'] = !isset($this->request->get['product_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
+
+		$data['tab_wt_filter'] = $this->language->get('tab_wt_filter');
+		$data['entry_values'] = $this->language->get('entry_values');
+		$data['wt_filter_select_category'] = $this->language->get('wt_filter_select_category');]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/language/en-gb/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA[$_['text_success']               = 'Success: You have modified products!';]]></search>
+      <add position="before"><![CDATA[
+// WT Filter
+$_['entry_values']               = 'Add values for this option.';
+$_['tab_wt_filter']              = 'Filter options';
+$_['wt_filter_select_category']  = 'First select a category for this product.';
+]]></add>
+    </operation>
+  </file>
+
+  <!-- Save filter values on product add/edit/copy/delete -->
+  <file path="admin/model/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA[namespace Opencart\Admin\Model\Catalog;]]></search>
+      <add position="replace"><![CDATA[namespace Opencart\Admin\Model\Extension\Ocmod\Catalog;]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[// Options
+		if (isset($data['product_option'])) {
+			foreach ($data['product_option'] as $product_option) {
+				$this->model_catalog_product->addOption($product_id, $product_option);
+			}
+		}]]></search>
+      <add position="before"><![CDATA[
+		// WT Filter — addProduct
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "wt_filter_option_value_to_product` WHERE `product_id` = '" . (int)$product_id . "'");
+		if (isset($data['wt_filter_product_option']) && is_array($data['wt_filter_product_option'])) {
+			foreach ($data['wt_filter_product_option'] as $option_id => $values) {
+				if (empty($values['values']) || !is_array($values['values'])) {
+					continue;
+				}
+				foreach ($values['values'] as $value_id => $value) {
+					if (isset($value['selected'])) {
+						$this->db->query("INSERT INTO `" . DB_PREFIX . "wt_filter_option_value_to_product` SET `product_id` = '" . (int)$product_id . "', `option_id` = '" . (int)$option_id . "', `value_id` = '" . $this->db->escape((string)$value_id) . "', `slide_value_min` = '" . (isset($value['slide_value_min']) ? (float)$value['slide_value_min'] : 0) . "', `slide_value_max` = '" . (isset($value['slide_value_max']) ? (float)$value['slide_value_max'] : 0) . "'");
+					}
+				}
+			}
+		}
+]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[// Options
+		$this->model_catalog_product->deleteOptions($product_id);
+
+		if (isset($data['product_option'])) {
+			foreach ($data['product_option'] as $product_option) {
+				$this->model_catalog_product->addOption($product_id, $product_option);
+			}
+		}]]></search>
+      <add position="before"><![CDATA[
+		// WT Filter — editProduct
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "wt_filter_option_value_to_product` WHERE `product_id` = '" . (int)$product_id . "'");
+		if (isset($data['wt_filter_product_option']) && is_array($data['wt_filter_product_option'])) {
+			foreach ($data['wt_filter_product_option'] as $option_id => $values) {
+				if (empty($values['values']) || !is_array($values['values'])) {
+					continue;
+				}
+				foreach ($values['values'] as $value_id => $value) {
+					if (isset($value['selected'])) {
+						$this->db->query("INSERT INTO `" . DB_PREFIX . "wt_filter_option_value_to_product` SET `product_id` = '" . (int)$product_id . "', `option_id` = '" . (int)$option_id . "', `value_id` = '" . $this->db->escape((string)$value_id) . "', `slide_value_min` = '" . (isset($value['slide_value_min']) ? (float)$value['slide_value_min'] : 0) . "', `slide_value_max` = '" . (isset($value['slide_value_max']) ? (float)$value['slide_value_max'] : 0) . "'");
+					}
+				}
+			}
+		}
+]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[$product_data['product_attribute'] = $this->model_catalog_product->getAttributes($product_id);]]></search>
+      <add position="after"><![CDATA[
+			// WT Filter
+			$this->load->model('extension/wt_filter/catalog/wt_filter');
+			if (method_exists($this->model_extension_wt_filter_catalog_wt_filter, 'getProductWtFilterValues')) {
+				$product_data['wt_filter_product_option'] = $this->model_extension_wt_filter_catalog_wt_filter->getProductWtFilterValues($product_id);
+			}
+]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[$this->db->query("DELETE FROM `" . DB_PREFIX . "product` WHERE `product_id` = '" . (int)$product_id . "'");
+
+		$this->model_catalog_product->deleteAttributes($product_id);]]></search>
+      <add position="after"><![CDATA[
+		// WT Filter
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "wt_filter_option_value_to_product` WHERE `product_id` = '" . (int)$product_id . "'");
+]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/view/template/catalog/product_form.twig">
+    <operation error="skip">
+      <search><![CDATA[// Manufacturer
+$('#input-manufacturer').autocomplete({]]></search>
+      <add position="before"><![CDATA[
+{# WT Filter #}
+<script type="text/javascript"><!--
+wt_filter = window.wt_filter || {};
+wt_filter.php = {
+	text_select: '{{ text_select|e('js') }}',
+	wt_filter_select_category: '{{ wt_filter_select_category|e('js') }}',
+	entry_values: '{{ entry_values|e('js') }}',
+	tab_wt_filter: '{{ tab_wt_filter|e('js') }}'
+};
+wt_filter.php.languages = [];
+{% for language in languages %}
+wt_filter.php.languages.push({
+	'language_id': {{ language.language_id }},
+	'name': '{{ language.name|e('js') }}',
+	'image': '{{ language.code }}.png'
+});
+{% endfor %}
+//--></script>
+]]></add>
+    </operation>
+  </file>
+
+  <!-- Optional: Ukrainian language pack (skip if not installed) -->
+  <file path="extension/language_ukrainian_4100/admin/language/uk-ua/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA[$_['text_success']           = 'Налаштування змінені';]]></search>
+      <add position="before"><![CDATA[
+// WT Filter
+$_['entry_values']               = 'Додайте значення для цієї опції.';
+$_['tab_wt_filter']              = 'Опції фільтра';
+$_['wt_filter_select_category']  = 'Спочатку виберіть категорію для цього товару.';
+]]></add>
+    </operation>
+  </file>
+
+</modification>

@@ -1,0 +1,25 @@
+<?php
+$_['heading_title']       = 'WT Info Block';
+$_['text_extension']      = 'Доповнення';
+$_['text_success']        = 'Налаштування модуля WT Info Block збережено!';
+$_['text_edit']           = 'Редагування WT Info Block';
+$_['text_enabled']        = 'Увімкнено';
+$_['text_disabled']       = 'Вимкнено';
+$_['text_item']           = 'Пункт';
+$_['text_items']          = 'Пункти (акордеон)';
+$_['text_add_item']       = 'Додати пункт';
+$_['text_edit_item']      = 'Редагувати пункт';
+$_['text_no_items']       = 'Поки немає пунктів. Натисніть +, щоб додати.';
+$_['text_confirm_delete'] = 'Видалити цей пункт?';
+$_['entry_name']          = 'Назва модуля';
+$_['entry_title']         = 'Заголовок блоку';
+$_['entry_status']        = 'Статус';
+$_['entry_item_title']    = 'Заголовок';
+$_['entry_item_text']     = 'Текст';
+$_['entry_item_image']    = 'Фото';
+$_['entry_sort_order']    = 'Порядок';
+$_['button_item_add']     = 'Додати';
+$_['button_item_save']    = 'Застосувати';
+$_['error_permission']    = 'Немає прав для зміни модуля WT Info Block!';
+$_['error_name']          = 'Назва модуля має бути від 3 до 64 символів!';
+$_['error_item_title']    = 'Вкажіть заголовок!';

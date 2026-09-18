@@ -1,0 +1,255 @@
+{{ header }}{{ column_left }}
+<div id="content">
+<style>
+#plum-theme-ui .plum-scheme-row {
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+#plum-theme-ui .plum-scheme {
+  float: left;
+  width: 72px;
+  margin: 0 12px 10px 0;
+  padding: 0;
+  text-align: center;
+  cursor: pointer;
+}
+#plum-theme-ui .plum-scheme-swatch {
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 6px;
+  border-radius: 8px;
+  border: 2px solid #d0d0d0;
+  box-sizing: border-box;
+}
+#plum-theme-ui .plum-scheme:hover .plum-scheme-swatch {
+  border-color: #888;
+}
+#plum-theme-ui .plum-scheme.is-active .plum-scheme-swatch {
+  border: 3px solid #1a7fb5;
+  box-shadow: 0 0 0 3px rgba(26,127,181,.45);
+}
+#plum-theme-ui .plum-scheme-name {
+  display: block;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #666;
+}
+#plum-theme-ui .plum-scheme.is-active .plum-scheme-name {
+  color: #222;
+  font-weight: 600;
+}
+#plum-theme-ui .plum-sizes {
+  width: 100%;
+  max-width: 740px;
+  margin: 0;
+  border: 0;
+}
+#plum-theme-ui .plum-sizes th,
+#plum-theme-ui .plum-sizes td {
+  border: 0;
+  padding: 8px 12px 8px 0;
+  vertical-align: middle;
+}
+#plum-theme-ui .plum-sizes th {
+  width: 58%;
+  font-weight: 600;
+  color: #555;
+  text-align: left;
+}
+#plum-theme-ui .plum-sizes input.form-control {
+  width: 80px !important;
+  max-width: 80px !important;
+  display: inline-block !important;
+}
+#plum-theme-ui .plum-sizes .plum-size-x {
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+  color: #999;
+  font-weight: 600;
+}
+</style>
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-theme" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+        <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="card" id="plum-theme-ui">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-theme" action="{{ save }}" method="post" data-oc-toggle="ajax">
+          <fieldset>
+            <legend>{{ text_general }}</legend>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+              <div class="col-sm-10">
+                <div class="form-check form-switch form-switch-lg">
+                  <input type="hidden" name="theme_plum_store_status" value="0"/>
+                  <input type="checkbox" name="theme_plum_store_status" value="1" id="input-status" class="form-check-input"{% if theme_plum_store_status %} checked{% endif %}/>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{{ text_appearance }}</legend>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_color_scheme }}</label>
+              <div class="col-sm-10">
+                <input type="hidden" name="theme_plum_store_color_scheme" id="input-color-scheme" value="{{ theme_plum_store_color_scheme }}"/>
+                <div class="plum-scheme-row" id="plum-scheme-row">
+                  {% for scheme in color_schemes %}
+                  <div class="plum-scheme{% if scheme.value == theme_plum_store_color_scheme %} is-active{% endif %}" data-value="{{ scheme.value }}" title="{{ scheme.label }}">
+                    <span class="plum-scheme-swatch" style="background: linear-gradient(135deg, {{ scheme.bg }} 0 50%, {{ scheme.accent }} 50% 100%);"></span>
+                    <span class="plum-scheme-name">{{ scheme.label }}</span>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_logo }}</label>
+              <div class="col-sm-10">
+                <div class="card" style="max-width: 180px;">
+                  <img src="{{ logo_thumb }}" alt="" id="thumb-theme-logo" data-oc-placeholder="{{ placeholder }}" class="card-img-top" style="max-height:50px;object-fit:contain;background:#f8f8f8;"/>
+                  <input type="hidden" name="theme_plum_store_logo" value="{{ theme_plum_store_logo }}" id="input-theme-logo"/>
+                  <div class="card-body p-1">
+                    <button type="button" data-oc-toggle="image" data-oc-target="#input-theme-logo" data-oc-thumb="#thumb-theme-logo" class="btn btn-primary btn-sm w-100 rounded-0"><i class="fa-solid fa-pencil"></i></button>
+                    <button type="button" data-oc-toggle="clear" data-oc-target="#input-theme-logo" data-oc-thumb="#thumb-theme-logo" class="btn btn-warning btn-sm w-100 rounded-0"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{{ text_product }}</legend>
+            <div class="row mb-3">
+              <label for="input-catalog-limit" class="col-sm-2 col-form-label">{{ entry_product_limit }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="theme_plum_store_product_limit" value="{{ theme_plum_store_product_limit }}" id="input-catalog-limit" class="form-control" style="max-width:120px;"/>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="input-description-limit" class="col-sm-2 col-form-label">{{ entry_product_description_length }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="theme_plum_store_product_description_length" value="{{ theme_plum_store_product_description_length }}" id="input-description-limit" class="form-control" style="max-width:120px;"/>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{{ text_image }}</legend>
+            <table class="plum-sizes">
+              <tbody>
+                <tr>
+                  <th>{{ entry_image_category }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_category_width" value="{{ theme_plum_store_image_category_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_category_height" value="{{ theme_plum_store_image_category_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_thumb }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_thumb_width" value="{{ theme_plum_store_image_thumb_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_thumb_height" value="{{ theme_plum_store_image_thumb_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_popup }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_popup_width" value="{{ theme_plum_store_image_popup_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_popup_height" value="{{ theme_plum_store_image_popup_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_product }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_product_width" value="{{ theme_plum_store_image_product_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_product_height" value="{{ theme_plum_store_image_product_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_additional }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_additional_width" value="{{ theme_plum_store_image_additional_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_additional_height" value="{{ theme_plum_store_image_additional_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_related }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_related_width" value="{{ theme_plum_store_image_related_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_related_height" value="{{ theme_plum_store_image_related_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_compare }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_compare_width" value="{{ theme_plum_store_image_compare_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_compare_height" value="{{ theme_plum_store_image_compare_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_wishlist }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_wishlist_width" value="{{ theme_plum_store_image_wishlist_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_wishlist_height" value="{{ theme_plum_store_image_wishlist_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_cart }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_cart_width" value="{{ theme_plum_store_image_cart_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_cart_height" value="{{ theme_plum_store_image_cart_height }}" class="form-control"/>
+                  </td>
+                </tr>
+                <tr>
+                  <th>{{ entry_image_location }}</th>
+                  <td>
+                    <input type="text" name="theme_plum_store_image_location_width" value="{{ theme_plum_store_image_location_width }}" class="form-control"/>
+                    <span class="plum-size-x">x</span>
+                    <input type="text" name="theme_plum_store_image_location_height" value="{{ theme_plum_store_image_location_height }}" class="form-control"/>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('#plum-scheme-row').on('click', '.plum-scheme', function () {
+  var value = $(this).data('value');
+  $('#plum-scheme-row .plum-scheme').removeClass('is-active');
+  $(this).addClass('is-active');
+  $('#input-color-scheme').val(value);
+});
+//--></script>
+{{ footer }}

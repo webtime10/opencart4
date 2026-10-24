@@ -80,6 +80,11 @@ class WtLang extends \Opencart\System\Engine\Controller {
 			'text_language' => $wt_lang->getLanguageSwitcherLabel(),
 		];
 
-		$output = $this->load->view('extension/wt_lang/module/wt_lang_switcher', $data);
+		if ((bool)$this->config->get('theme_plum_store_status') && $this->config->get('config_theme') === 'plum_store') {
+			$data['plum_icons'] = 'extension/plum_store/catalog/view/image/plum_store/icons.svg';
+			$output = $this->load->view('extension/plum_store/module/wt_lang_switcher', $data);
+		} else {
+			$output = $this->load->view('extension/wt_lang/module/wt_lang_switcher', $data);
+		}
 	}
 }

@@ -1,0 +1,7 @@
+{% for item in items %}
+<a class="home-tile{% if item.percent %} home-tile--dark{% endif %}" href="{{ item.href }}"{% if item.image %} style="background-image:url('{{ item.image }}')"{% endif %}>
+  {% if item.percent %}<span class="home-tile-badge">{{ item.percent }}</span>{% endif %}
+  {% if item.title %}<strong>{{ item.title }}</strong>{% endif %}
+  {% if item.description %}<span>{{ item.description }}</span>{% endif %}
+</a>
+{% endfor %}

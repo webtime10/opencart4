@@ -1,7 +1,7 @@
 {
-  "name": "WT Exchange",
-  "description": "Import/Export for OpenCart 4: products, categories, manufacturers, customers, orders. CSV/JSON/XML/XLSX, AJAX, macros, scheduler (ported from OC3).",
-  "version": "1.0.0",
-  "author": "WT",
-  "link": ""
+    "name": "WT Exchange",
+    "description": "Import/Export for OpenCart 4: products, categories, manufacturers, customers, orders. CSV/JSON/XML/XLSX, AJAX, macros, scheduler (ported from OC3).",
+    "version": "1.0.0",
+    "author": "WT",
+    "link": "https://opencart4.loc/"
 }

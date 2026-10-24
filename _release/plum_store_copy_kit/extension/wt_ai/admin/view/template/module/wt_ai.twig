@@ -1,0 +1,241 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+        <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-module" action="{{ save }}" method="post" data-oc-toggle="ajax">
+
+          <fieldset>
+            <legend>{{ text_general }}</legend>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+              <div class="col-sm-10">
+                <select name="module_wt_ai_status" class="form-select">
+                  <option value="1"{% if module_wt_ai_status %} selected{% endif %}>{{ text_enabled }}</option>
+                  <option value="0"{% if not module_wt_ai_status %} selected{% endif %}>{{ text_disabled }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ text_provider }}</label>
+              <div class="col-sm-10">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="module_wt_ai_provider" id="provider-gemini" value="gemini"{% if module_wt_ai_provider == 'gemini' %} checked{% endif %}/>
+                  <label class="form-check-label" for="provider-gemini">{{ text_provider_gemini }}</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="module_wt_ai_provider" id="provider-deepseek" value="deepseek"{% if module_wt_ai_provider == 'deepseek' %} checked{% endif %}/>
+                  <label class="form-check-label" for="provider-deepseek">{{ text_provider_deepseek }}</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="module_wt_ai_provider" id="provider-openai" value="openai"{% if module_wt_ai_provider == 'openai' %} checked{% endif %}/>
+                  <label class="form-check-label" for="provider-openai">{{ text_provider_openai }}</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3 wt-ai-provider-panel" data-provider="gemini"{% if module_wt_ai_provider != 'gemini' %} style="display:none"{% endif %}>
+              <label class="col-sm-2 col-form-label">{{ entry_api_key }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="module_wt_ai_api_key_gemini" value="{{ module_wt_ai_api_key_gemini }}" class="form-control" placeholder="AIza..."/>
+                <div class="form-text">{{ help_api_key_gemini }}</div>
+              </div>
+            </div>
+            <div class="row mb-3 wt-ai-provider-panel" data-provider="gemini"{% if module_wt_ai_provider != 'gemini' %} style="display:none"{% endif %}>
+              <label class="col-sm-2 col-form-label">{{ entry_model }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="module_wt_ai_model_gemini" value="{{ module_wt_ai_model_gemini }}" class="form-control"/>
+              </div>
+            </div>
+
+            <div class="row mb-3 wt-ai-provider-panel" data-provider="deepseek"{% if module_wt_ai_provider != 'deepseek' %} style="display:none"{% endif %}>
+              <label class="col-sm-2 col-form-label">{{ entry_api_key }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="module_wt_ai_api_key_deepseek" value="{{ module_wt_ai_api_key_deepseek }}" class="form-control" placeholder="sk-..."/>
+                <div class="form-text">{{ help_api_key_deepseek }}</div>
+              </div>
+            </div>
+            <div class="row mb-3 wt-ai-provider-panel" data-provider="deepseek"{% if module_wt_ai_provider != 'deepseek' %} style="display:none"{% endif %}>
+              <label class="col-sm-2 col-form-label">{{ entry_model }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="module_wt_ai_model_deepseek" value="{{ module_wt_ai_model_deepseek }}" class="form-control"/>
+              </div>
+            </div>
+
+            <div class="row mb-3 wt-ai-provider-panel" data-provider="openai"{% if module_wt_ai_provider != 'openai' %} style="display:none"{% endif %}>
+              <label class="col-sm-2 col-form-label">{{ entry_api_key }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="module_wt_ai_api_key_openai" value="{{ module_wt_ai_api_key_openai }}" class="form-control" placeholder="sk-..."/>
+                <div class="form-text">{{ help_api_key_openai }}</div>
+              </div>
+            </div>
+            <div class="row mb-3 wt-ai-provider-panel" data-provider="openai"{% if module_wt_ai_provider != 'openai' %} style="display:none"{% endif %}>
+              <label class="col-sm-2 col-form-label">{{ entry_model }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="module_wt_ai_model_openai" value="{{ module_wt_ai_model_openai }}" class="form-control"/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ button_connect }}</label>
+              <div class="col-sm-10">
+                <button type="button" id="button-wt-ai-connect" class="btn btn-light"><i class="fa-solid fa-plug"></i> {{ button_connect }}</button>
+                <span id="wt-ai-connect-status" class="ms-2 fw-bold"></span>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{{ text_features }}</legend>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_do_translate }}</label>
+              <div class="col-sm-10">
+                <div class="form-check form-switch">
+                  <input type="checkbox" name="module_wt_ai_do_translate" value="1" class="form-check-input" id="do-translate"{% if module_wt_ai_do_translate %} checked{% endif %}/>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ text_seo_fields }}</label>
+              <div class="col-sm-10">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_do_meta_title" value="1" id="seo-title"{% if module_wt_ai_do_meta_title %} checked{% endif %}/><label class="form-check-label" for="seo-title">meta title</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_do_meta_description" value="1" id="seo-desc"{% if module_wt_ai_do_meta_description %} checked{% endif %}/><label class="form-check-label" for="seo-desc">meta description</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_do_meta_h1" value="1" id="seo-h1"{% if module_wt_ai_do_meta_h1 %} checked{% endif %}/><label class="form-check-label" for="seo-h1">meta H1</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_do_meta_keyword" value="1" id="seo-kw"{% if module_wt_ai_do_meta_keyword %} checked{% endif %}/><label class="form-check-label" for="seo-kw">meta keywords</label></div>
+                <div class="form-text">{{ help_seo_checkboxes }}</div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_overwrite }}</label>
+              <div class="col-sm-10">
+                <div class="form-check form-switch">
+                  <input type="checkbox" name="module_wt_ai_overwrite" value="1" class="form-check-input"{% if module_wt_ai_overwrite %} checked{% endif %}/>
+                  <span class="form-text">{{ help_overwrite }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ text_entities }}</label>
+              <div class="col-sm-10">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_product" value="1"{% if module_wt_ai_product %} checked{% endif %}/> {{ text_product }}</div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_category" value="1"{% if module_wt_ai_category %} checked{% endif %}/> {{ text_category }}</div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="module_wt_ai_article" value="1"{% if module_wt_ai_article %} checked{% endif %}/> {{ text_article }}</div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{{ text_prompts }}</legend>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_prompt_translate }}</label>
+              <div class="col-sm-10">
+                <textarea name="module_wt_ai_prompt_translate" rows="8" class="form-control">{{ module_wt_ai_prompt_translate }}</textarea>
+                <div class="form-text">{{ help_prompt_vars }}</div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_prompt_seo }}</label>
+              <div class="col-sm-10">
+                <textarea name="module_wt_ai_prompt_seo" rows="8" class="form-control">{{ module_wt_ai_prompt_seo }}</textarea>
+              </div>
+            </div>
+          </fieldset>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+(function() {
+  var testUrl = {{ test|json_encode|raw }};
+  var textTesting = {{ text_testing|json_encode|raw }};
+  var textConnected = {{ text_connected|json_encode|raw }};
+  var textError = {{ text_connect_error|json_encode|raw }};
+
+  function selectedProvider() {
+    return document.querySelector('input[name="module_wt_ai_provider"]:checked')?.value || 'gemini';
+  }
+
+  function showProvider(provider) {
+    document.querySelectorAll('.wt-ai-provider-panel').forEach(function(el) {
+      el.style.display = el.getAttribute('data-provider') === provider ? '' : 'none';
+    });
+    var status = document.getElementById('wt-ai-connect-status');
+    if (status) {
+      status.textContent = '';
+      status.style.color = '';
+    }
+  }
+
+  document.querySelectorAll('input[name="module_wt_ai_provider"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      showProvider(selectedProvider());
+    });
+  });
+
+  var btn = document.getElementById('button-wt-ai-connect');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var provider = selectedProvider();
+      var status = document.getElementById('wt-ai-connect-status');
+      var apiKeyEl = document.querySelector('input[name="module_wt_ai_api_key_' + provider + '"]');
+      var modelEl = document.querySelector('input[name="module_wt_ai_model_' + provider + '"]');
+      var apiKey = apiKeyEl ? apiKeyEl.value : '';
+      var model = modelEl ? modelEl.value : '';
+
+      btn.disabled = true;
+      if (status) {
+        status.style.color = '#6c757d';
+        status.textContent = textTesting;
+      }
+
+      var body = new FormData();
+      body.append('provider', provider);
+      body.append('api_key', apiKey);
+      body.append('model', model);
+
+      fetch(testUrl, {
+        method: 'POST',
+        body: body,
+        credentials: 'same-origin'
+      }).then(function(r) {
+        var ct = r.headers.get('content-type') || '';
+        if (ct.indexOf('application/json') === -1) {
+          throw new Error(textError);
+        }
+        return r.json();
+      }).then(function(json) {
+        if (json && json.ok) {
+          status.style.color = '#198754';
+          status.textContent = json.message || textConnected;
+        } else {
+          status.style.color = '#dc3545';
+          status.textContent = (json && json.message) ? json.message : textError;
+        }
+      }).catch(function(err) {
+        status.style.color = '#dc3545';
+        status.textContent = err && err.message ? err.message : textError;
+      }).finally(function() {
+        btn.disabled = false;
+      });
+    });
+  }
+})();
+//--></script>
+{{ footer }}

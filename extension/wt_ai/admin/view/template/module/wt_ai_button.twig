@@ -1,0 +1,34 @@
+<button type="button" id="button-wt-ai" class="btn btn-info" style="margin-right:5px;" data-entity="{{ entity }}" data-id="{{ entity_id }}" data-action="{{ action }}" title="{{ button_run }}"><i class="fa-solid fa-language"></i> {{ button_run }}</button>
+<script type="text/javascript"><!--
+(function () {
+  var btn = document.getElementById('button-wt-ai');
+  if (!btn || btn.dataset.wtBound) return;
+  btn.dataset.wtBound = '1';
+  btn.addEventListener('click', function () {
+    var id = parseInt(btn.getAttribute('data-id'), 10) || 0;
+    if (id <= 0) {
+      alert({{ text_need_save|json_encode|raw }});
+      return;
+    }
+    if (btn.disabled) return;
+    btn.disabled = true;
+    var oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + {{ text_running|json_encode|raw }};
+    var body = new FormData();
+    body.append('entity', btn.getAttribute('data-entity'));
+    body.append('entity_id', String(id));
+    fetch(btn.getAttribute('data-action'), { method: 'POST', body: body, credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (json && json.ok) {
+          alert({{ text_done|json_encode|raw }} + '\n' + (json.message || ''));
+          location.reload();
+        } else {
+          alert((json && json.message) ? json.message : 'Error');
+        }
+      })
+      .catch(function (e) { alert(String(e)); })
+      .finally(function () { btn.disabled = false; btn.innerHTML = oldHtml; });
+  });
+})();
+//--></script>

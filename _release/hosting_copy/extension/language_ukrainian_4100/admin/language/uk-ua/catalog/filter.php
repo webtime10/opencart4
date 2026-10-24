@@ -1,0 +1,26 @@
+<?php
+// Heading
+$_['heading_title']     = 'Фільтри';
+
+// Text
+$_['text_success']      = 'Налаштування змінені';
+$_['text_list']         = 'Список фільтрів';
+$_['text_add']          = 'Додати';
+$_['text_edit']         = 'Редагування';
+
+// Column
+$_['column_name']       = 'Назва фільтру';
+$_['column_filter_group'] = 'Група фільтрів';
+$_['column_sort_order'] = 'Порядок сортування';
+$_['column_action']     = 'Дія';
+
+// Entry
+$_['entry_name']        = 'Назва фільтра';
+$_['entry_filter_group'] = 'Група фільтрів';
+$_['entry_sort_order']  = 'Порядок сортування';
+
+// Error
+$_['error_warning']     = 'Будь ласка, перевірте форму на наявність помилок';
+$_['error_permission']  = 'У вас недостатньо прав для внесення змін';
+$_['error_name']        = 'Назва має містити від 1 до 64 символів';
+$_['error_filter_group'] = 'Необхідно вказати групу фільтрів';

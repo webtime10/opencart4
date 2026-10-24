@@ -1,0 +1,26 @@
+<?php
+$_['heading_title'] = 'WT Big Banner';
+$_['text_extension'] = 'Расширения';
+$_['text_success'] = 'Готово: модуль WT Big Banner сохранён!';
+$_['text_edit'] = 'Редактирование WT Big Banner';
+$_['text_enabled'] = 'Включено';
+$_['text_disabled'] = 'Выключено';
+$_['text_items'] = 'Баннеры';
+$_['text_item'] = 'Баннер';
+$_['text_no_items'] = 'Баннеров пока нет. Нажмите «Добавить баннер».';
+$_['entry_name'] = 'Название модуля';
+$_['entry_status'] = 'Статус';
+$_['entry_title'] = 'Заголовок';
+$_['entry_description'] = 'Описание';
+$_['entry_image'] = 'Фото';
+$_['entry_percent'] = 'Проценты / бейдж';
+$_['entry_product'] = 'Ссылка на товар';
+$_['entry_sort_order'] = 'Порядок';
+$_['help_percent'] = 'Пример: -40% или 40. Пусто — без бейджа.';
+$_['help_product'] = 'Введите минимум 2 буквы для поиска товара.';
+$_['button_item_add'] = 'Добавить баннер';
+$_['button_remove'] = 'Удалить';
+$_['button_save'] = 'Сохранить';
+$_['button_back'] = 'Назад';
+$_['error_permission'] = 'Нет прав на изменение WT Big Banner!';
+$_['error_name'] = 'Название модуля должно быть от 3 до 64 символов!';

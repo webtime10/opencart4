@@ -55,6 +55,9 @@
   font-size: 14px;
   font-weight: 600;
   border-bottom: 2px solid var(--topbar-border);
+  overflow: visible;
+  position: relative;
+  z-index: 40;
 }
 
 .topbar .container,
@@ -106,13 +109,13 @@
   color: var(--accent);
 }
 
-.topbar a,
-.topbar a:visited {
+.topbar a:not(.topbar-dd-item),
+.topbar a:not(.topbar-dd-item):visited {
   color: var(--topbar-link);
   font-weight: 600;
 }
 
-.topbar a:hover {
+.topbar a:not(.topbar-dd-item):hover {
   color: var(--accent);
 }
 
@@ -125,6 +128,29 @@
 
 .topbar-dd {
   position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+form.topbar-dd {
+  margin: 0;
+}
+
+form.topbar-dd .topbar-dd-btn,
+form.topbar-dd .topbar-dd-item {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+a.topbar-dd-item,
+a.topbar-dd-item:visited,
+a.topbar-dd-item:hover,
+a.topbar-dd-item:focus {
+  text-decoration: none;
+  color: var(--text);
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
 }
 
 .topbar-dd-btn {
@@ -144,6 +170,16 @@
   cursor: pointer;
 }
 
+.topbar-dd-btn:focus,
+.topbar-dd-btn:focus-visible {
+  outline: none;
+}
+
+.topbar-dd-btn .icon,
+.topbar-dd-btn svg {
+  pointer-events: none;
+}
+
 .topbar-dd-btn:hover,
 .topbar-dd.is-open .topbar-dd-btn {
   color: var(--accent);
@@ -160,10 +196,11 @@
 }
 
 .topbar-dd-menu {
+  display: none !important;
   position: absolute;
   top: 100%;
   right: 0;
-  z-index: 50;
+  z-index: 200;
   min-width: 112px;
   margin: 6px 0 0;
   padding: 6px;
@@ -175,8 +212,8 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.topbar-dd-menu[hidden] {
-  display: none;
+.topbar-dd.is-open .topbar-dd-menu {
+  display: block !important;
 }
 
 .topbar-dd-item {
@@ -198,10 +235,33 @@
 
 .topbar-dd-item:hover {
   background: var(--page-bg);
+  color: var(--text);
 }
 
-.topbar-dd-item.is-active {
+.topbar-dd-item.is-active,
+.topbar-dd-item.is-active:hover,
+.topbar-dd-item.is-active:visited {
   background: var(--page-bg);
+  color: var(--link-hover);
+}
+
+/* Bootstrap .dropdown-item leftover styles must not affect plum switchers */
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item,
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item:hover,
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item:focus,
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item:active {
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  outline: none;
+}
+
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item:hover,
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item.is-active {
+  background: var(--page-bg);
+}
+
+.topbar .topbar-dd-menu .topbar-dd-item.dropdown-item.is-active {
   color: var(--link-hover);
 }
 
@@ -230,6 +290,13 @@
   color: var(--header-text);
   padding: 18px 0;
   border-bottom: 1px solid var(--border);
+  overflow: visible;
+  position: relative;
+  z-index: 100;
+}
+
+.header .container {
+  overflow: visible;
 }
 
 .header-row {
@@ -237,6 +304,7 @@
   flex-wrap: nowrap;
   align-items: center;
   gap: 24px;
+  overflow: visible;
 }
 
 .header-start {
@@ -245,6 +313,7 @@
   gap: 0;
   flex: 1 1 auto;
   min-width: 0;
+  overflow: visible;
 }
 
 .header-end {

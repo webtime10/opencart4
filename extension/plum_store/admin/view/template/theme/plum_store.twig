@@ -41,6 +41,46 @@
   color: #222;
   font-weight: 600;
 }
+#plum-theme-ui .plum-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+#plum-theme-ui .plum-header-card {
+  width: 220px;
+  margin: 0;
+  padding: 8px;
+  border: 2px solid #d0d0d0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  box-sizing: border-box;
+}
+#plum-theme-ui .plum-header-card:hover {
+  border-color: #888;
+}
+#plum-theme-ui .plum-header-card.is-active {
+  border-color: #1a7fb5;
+  box-shadow: 0 0 0 3px rgba(26,127,181,.45);
+}
+#plum-theme-ui .plum-header-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #2a2a2a;
+}
+#plum-theme-ui .plum-header-card-name {
+  display: block;
+  margin-top: 8px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
+#plum-theme-ui .plum-header-card.is-active .plum-header-card-name {
+  color: #222;
+  font-weight: 600;
+}
 #plum-theme-ui .plum-sizes {
   width: 100%;
   max-width: 740px;
@@ -119,6 +159,20 @@
                   {% endfor %}
                 </div>
                 <div class="clearfix"></div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label">{{ entry_header_layout }}</label>
+              <div class="col-sm-10">
+                <input type="hidden" name="theme_plum_store_header_layout" id="input-header-layout" value="{{ theme_plum_store_header_layout }}"/>
+                <div class="plum-header-row" id="plum-header-row">
+                  {% for layout in header_layouts %}
+                  <div class="plum-header-card{% if layout.value == theme_plum_store_header_layout %} is-active{% endif %}" data-value="{{ layout.value }}" title="{{ layout.label }}">
+                    <img src="{{ layout.preview }}" alt="{{ layout.label }}"/>
+                    <span class="plum-header-card-name">{{ layout.label }}</span>
+                  </div>
+                  {% endfor %}
+                </div>
               </div>
             </div>
             <div class="row mb-3">
@@ -250,6 +304,12 @@ $('#plum-scheme-row').on('click', '.plum-scheme', function () {
   $('#plum-scheme-row .plum-scheme').removeClass('is-active');
   $(this).addClass('is-active');
   $('#input-color-scheme').val(value);
+});
+$('#plum-header-row').on('click', '.plum-header-card', function () {
+  var value = $(this).data('value');
+  $('#plum-header-row .plum-header-card').removeClass('is-active');
+  $(this).addClass('is-active');
+  $('#input-header-layout').val(value);
 });
 //--></script>
 {{ footer }}

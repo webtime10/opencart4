@@ -19,6 +19,11 @@ class WtHomeStage extends \Opencart\System\Engine\Controller {
 		$data['category'] = $this->url->link('product/special', 'language=' . $lang);
 		$data['product'] = $this->url->link('product/search', 'language=' . $lang);
 
+		// Prefer dedicated banner modules; keep static demo as fallback.
+		// OC4 load->controller() returns Exception object (does not throw).
+		$data['big_banner'] = $this->safeModule('extension/wt_big_banner/module/wt_big_banner', $this->getModuleSetting('wt_big_banner.wt_big_banner'));
+		$data['mini_banner'] = $this->safeModule('extension/wt_mini_banner/module/wt_mini_banner', $this->getModuleSetting('wt_mini_banner.wt_mini_banner'));
+
 		$data['slides'] = [
 			[
 				'eyebrow' => $this->language->get('text_slide1_eyebrow'),
@@ -68,5 +73,40 @@ class WtHomeStage extends \Opencart\System\Engine\Controller {
 		$data['menu'] = $this->load->controller('common/menu');
 
 		return $this->load->view('extension/wt_home_stage/module/wt_home_stage', $data);
+	}
+
+	private function safeModule(string $route, array $setting = []): string {
+		if (!$setting) {
+			return '';
+		}
+
+		try {
+			$output = $this->load->controller($route, $setting);
+		} catch (\Throwable $e) {
+			return '';
+		}
+
+		if ($output instanceof \Throwable || $output instanceof \Exception) {
+			return '';
+		}
+
+		return is_string($output) ? $output : '';
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	private function getModuleSetting(string $code): array {
+		$query = $this->db->query("SELECT `setting` FROM `" . DB_PREFIX . "module` WHERE `code` = '" . $this->db->escape($code) . "' ORDER BY `module_id` ASC");
+
+		foreach ($query->rows as $row) {
+			$setting = json_decode((string)$row['setting'], true);
+
+			if (is_array($setting) && !empty($setting['status'])) {
+				return $setting;
+			}
+		}
+
+		return [];
 	}
 }

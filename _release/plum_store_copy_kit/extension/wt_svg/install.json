@@ -1,0 +1,7 @@
+{
+    "name": "WT SVG",
+    "description": "Allow SVG upload and preview in the OpenCart 4 file manager (Events, no OCMOD).",
+    "version": "1.0.0",
+    "author": "WT",
+    "link": "https://opencart4.loc/"
+}

@@ -1,0 +1,26 @@
+<?php
+$_['heading_title'] = 'WT Big Banner';
+$_['text_extension'] = 'Extensions';
+$_['text_success'] = 'Success: You have modified WT Big Banner!';
+$_['text_edit'] = 'Edit WT Big Banner';
+$_['text_enabled'] = 'Enabled';
+$_['text_disabled'] = 'Disabled';
+$_['text_items'] = 'Banners';
+$_['text_item'] = 'Banner';
+$_['text_no_items'] = 'No banners yet. Click Add banner.';
+$_['entry_name'] = 'Module Name';
+$_['entry_status'] = 'Status';
+$_['entry_title'] = 'Title';
+$_['entry_description'] = 'Description';
+$_['entry_image'] = 'Image';
+$_['entry_percent'] = 'Percent / badge';
+$_['entry_product'] = 'Product link';
+$_['entry_sort_order'] = 'Sort Order';
+$_['help_percent'] = 'Example: -40% or 40. Leave empty to hide badge.';
+$_['help_product'] = 'Type at least 2 letters to search products.';
+$_['button_item_add'] = 'Add banner';
+$_['button_remove'] = 'Remove';
+$_['button_save'] = 'Save';
+$_['button_back'] = 'Back';
+$_['error_permission'] = 'Warning: You do not have permission to modify WT Big Banner!';
+$_['error_name'] = 'Module Name must be between 3 and 64 characters!';

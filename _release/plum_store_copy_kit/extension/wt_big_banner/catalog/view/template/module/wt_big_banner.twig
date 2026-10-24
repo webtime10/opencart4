@@ -1,0 +1,31 @@
+<div class="home-slider" data-home-slider>
+  <button type="button" class="home-slider-nav is-prev" data-home-prev aria-label="Prev">‹</button>
+  <div class="home-slider-track">
+    {% for item in items %}
+    <article class="home-slide{% if loop.first %} is-active{% endif %}"{% if item.image %} style="background-image:url('{{ item.image }}')"{% endif %}>
+      <div class="home-slide-body">
+        {% if item.percent %}<small>{{ item.percent }}</small>{% endif %}
+        {% if item.title %}<h2>{{ item.title }}</h2>{% endif %}
+        {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+        <a class="btn btn-primary btn-sm" href="{{ item.href }}">{{ text_more }}</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <button type="button" class="home-slider-nav is-next" data-home-next aria-label="Next">›</button>
+</div>
+<script>
+(function ($) {
+  var $root = $("[data-home-slider]").last();
+  if (!$root.length || $root.data("wtBound")) return;
+  $root.data("wtBound", 1);
+  var $slides = $root.find(".home-slide");
+  var i = 0;
+  function go(n) {
+    i = (n + $slides.length) % $slides.length;
+    $slides.removeClass("is-active").eq(i).addClass("is-active");
+  }
+  $root.on("click", "[data-home-prev]", function () { go(i - 1); });
+  $root.on("click", "[data-home-next]", function () { go(i + 1); });
+})(jQuery);
+</script>

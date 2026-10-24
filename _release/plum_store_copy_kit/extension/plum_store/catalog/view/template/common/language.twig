@@ -1,0 +1,22 @@
+{% if languages %}
+{% set current_label = code|default('en')|split('-')|first|upper %}
+{% set icon_sprite = plum_icons|default('extension/plum_store/catalog/view/image/plum_store/icons.svg') %}
+<form id="form-language" action="{{ action }}" method="post" data-oc-toggle="ajax" class="topbar-dd" data-dropdown>
+  <button type="button" class="topbar-dd-btn" aria-expanded="false" aria-haspopup="listbox">
+    <span class="topbar-dd-label" data-dd-label>{{ current_label }}</span>
+    <svg class="icon icon-chevron" aria-hidden="true"><use href="{{ icon_sprite }}#i-chevron"></use></svg>
+  </button>
+  {% if languages|length > 1 %}
+  <ul class="topbar-dd-menu" role="listbox">
+    {% for language in languages %}
+    {% set item_label = language.code|split('-')|first|upper %}
+    <li>
+      <a href="{{ language.code }}" class="topbar-dd-item dropdown-item{% if language.code == code %} is-active{% endif %}" data-value="{{ language.code }}" data-label="{{ item_label }}" title="{{ language.name }}">{{ item_label }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <input type="hidden" name="code" value=""/>
+  <input type="hidden" name="redirect" value="{{ redirect }}"/>
+</form>
+{% endif %}

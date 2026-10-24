@@ -1,0 +1,22 @@
+{% if currencies %}
+{% set icon_sprite = plum_icons|default('extension/plum_store/catalog/view/image/plum_store/icons.svg') %}
+<form id="form-currency" action="{{ action }}" method="post" data-oc-toggle="ajax" class="topbar-dd" data-dropdown>
+  <button type="button" class="topbar-dd-btn" aria-expanded="false"{% if currencies|length > 1 %} aria-haspopup="listbox"{% endif %}>
+    <span class="topbar-dd-label" data-dd-label>{{ code }}</span>
+    {% if currencies|length > 1 %}
+    <svg class="icon icon-chevron" aria-hidden="true"><use href="{{ icon_sprite }}#i-chevron"></use></svg>
+    {% endif %}
+  </button>
+  {% if currencies|length > 1 %}
+  <ul class="topbar-dd-menu" role="listbox">
+    {% for currency in currencies %}
+    <li>
+      <a href="{{ currency.code }}" class="topbar-dd-item dropdown-item{% if currency.code == code %} is-active{% endif %}" data-value="{{ currency.code }}" data-label="{{ currency.code }}" title="{{ currency.title }}">{{ currency.code }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <input type="hidden" name="code" value=""/>
+  <input type="hidden" name="redirect" value="{{ redirect }}"/>
+</form>
+{% endif %}

@@ -15,6 +15,7 @@ $_['text_content_top']    = 'Верхний контент';
 $_['text_content_bottom'] = 'Нижний контент';
 $_['text_column_left']    = 'Левая колонка';
 $_['text_column_right']   = 'Правая колонка';
+$_['text_menu']           = 'Меню (шапка)';
 
 // Column
 $_['column_name']         = 'Название макета';

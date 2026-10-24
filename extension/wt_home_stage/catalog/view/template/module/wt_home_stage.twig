@@ -4,6 +4,9 @@
       <aside class="home-menu">{{ menu }}</aside>
       <div class="home-main">
         <div class="home-banners">
+          {% if big_banner %}
+            {{ big_banner }}
+          {% else %}
           <div class="home-slider" data-home-slider>
             <button type="button" class="home-slider-nav is-prev" data-home-prev aria-label="Prev">‹</button>
             <div class="home-slider-track">
@@ -20,15 +23,20 @@
             </div>
             <button type="button" class="home-slider-nav is-next" data-home-next aria-label="Next">›</button>
           </div>
+          {% endif %}
           <div class="home-side">
-            {% for tile in tiles %}
-            <a class="home-tile {{ tile.class }}" href="{{ tile.href }}"{% if tile.image %} style="background-image:url('{{ tile.image }}')"{% endif %}>
-              {% if tile.badge %}<span class="home-tile-badge">{{ tile.badge }}</span>{% endif %}
-              <strong>{{ tile.title }}</strong>
-              <span>{{ tile.text }}</span>
-              {% if tile.price %}<em>{{ tile.price }}</em>{% endif %}
-            </a>
-            {% endfor %}
+            {% if mini_banner %}
+              {{ mini_banner }}
+            {% else %}
+              {% for tile in tiles %}
+              <a class="home-tile {{ tile.class }}" href="{{ tile.href }}"{% if tile.image %} style="background-image:url('{{ tile.image }}')"{% endif %}>
+                {% if tile.badge %}<span class="home-tile-badge">{{ tile.badge }}</span>{% endif %}
+                <strong>{{ tile.title }}</strong>
+                <span>{{ tile.text }}</span>
+                {% if tile.price %}<em>{{ tile.price }}</em>{% endif %}
+              </a>
+              {% endfor %}
+            {% endif %}
           </div>
         </div>
       </div>
@@ -50,6 +58,7 @@
     </div>
   </div>
 </section>
+{% if not big_banner %}
 <script>
 (function ($) {
   var $root = $("[data-home-slider]").first();
@@ -64,3 +73,4 @@
   $root.on("click", "[data-home-next]", function () { go(i + 1); });
 })(jQuery);
 </script>
+{% endif %}

@@ -1,0 +1,54 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      {% if informations %}
+      <div>
+        <h4>{{ text_information }}</h4>
+        <ul>
+          {% for information in informations %}
+          <li><a href="{{ information.href }}">{{ information.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div>
+        <h4>{{ text_service }}</h4>
+        <ul>
+          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
+          <li><a href="{{ return }}">{{ text_return }}</a></li>
+          {% if gdpr %}<li><a href="{{ gdpr }}">{{ text_gdpr }}</a></li>{% endif %}
+          <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>{{ text_extra }}</h4>
+        <ul>
+          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
+          {% if affiliate %}<li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li>{% endif %}
+          <li><a href="{{ special }}">{{ text_special }}</a></li>
+          {% if blog %}<li><a href="{{ blog }}">{{ text_blog }}</a></li>{% endif %}
+        </ul>
+      </div>
+      <div>
+        <h4>{{ text_account }}</h4>
+        <ul>
+          <li><a href="{{ account }}">{{ text_account }}</a></li>
+          <li><a href="{{ order }}">{{ text_order }}</a></li>
+          <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
+          <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-copy">
+      <p>{{ powered }} · <strong>Plum Store</strong></p>
+    </div>
+  </div>
+</footer>
+{% for style in styles %}
+<link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}"/>
+{% endfor %}
+{% for script in scripts %}
+<script src="{{ script.href }}" type="text/javascript"></script>
+{% endfor %}
+</body>
+</html>

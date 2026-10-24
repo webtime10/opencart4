@@ -1,0 +1,59 @@
+﻿Plum Store — hosting copy for OpenCart 4.1.x
+============================================
+Target: OpenCart 4.1.0.4 (4.1.0.3+)
+Built:  2026-09-30
+
+Структура
+---------
+  hosting_copy/
+    extension/     plum_store, wt_*, language_ukrainian_4100
+    register.php   ← обязательно (пути + тема + меню + «Настройки темы»)
+    INSTALL.txt
+
+Total Commander
+---------------
+LEFT:  hosting_copy\
+RIGHT: корень сайта (index.php, admin/, extension/opencart/)
+
+F5: папку extension + register.php → в корень (merge).
+Должно стать: extension/plum_store рядом с extension/opencart
+
+Регистрация (обязательно)
+-------------------------
+Открой:  https://твой-сайт/register.php
+
+Скрипт:
+  1) прописывает модули в БД (появятся в Extensions)
+  2) ставит тему plum_store
+  3) вешает Events темы — в т.ч. пункт слева «Настройки темы»
+  4) выдаёт права админам
+  5) включает config_theme = plum_store
+  6) создаёт ДВА WT Menu и вешает слот 2 на layout position menu:
+       • WT Menu Catalog (slot 1) — кнопка «Каталог товарів» (vertical)
+         пустое дерево → авто из категорий OpenCart
+       • WT Menu Top (slot 2) — коричневая полоска под шапкой (horizontal)
+         Home по умолчанию
+
+СРАЗУ УДАЛИ register.php с сервера.
+
+МЕНЮ — жёсткие правила (не путать слоты!)
+-----------------------------------------
+  Slot 1 = только каталог (vmenu). Тема читает __slot=1.
+           Если слота 1 нет / не vmenu → fallback на категории.
+           Горизонтальный meganav в каталог НЕ подставляется.
+
+  Slot 2 = только верхняя полоска (meganav). Layout position "menu"
+           или авто-fallback на __slot=2.
+
+  Никогда не ставь один и тот же инстанс в оба места.
+  Никогда не ставь slot 2 в каталог и slot 1 в position menu.
+
+После register.php
+------------------
+Админка F5 → слева пункт «Настройки темы» (палитра).
+
+Extensions → Modules:
+  WT Menu Catalog (slot 1) — при желании наполни дерево + иконки
+  WT Menu Top (slot 2) — пункты верхней полоски
+
+Только OpenCart 4.1.x (не 4.0.x).

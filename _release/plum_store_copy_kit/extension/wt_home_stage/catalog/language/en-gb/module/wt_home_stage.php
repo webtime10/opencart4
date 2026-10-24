@@ -1,0 +1,21 @@
+<?php
+$_['heading_title'] = 'Home Stage';
+$_['text_slide1_eyebrow'] = 'Apple Official Partner';
+$_['text_slide1_title'] = 'iPhone 17 Pro';
+$_['text_slide1_text'] = 'Available from September 25';
+$_['text_slide1_button'] = 'Learn more';
+$_['text_slide2_eyebrow'] = 'New';
+$_['text_slide2_title'] = 'Galaxy S25 Ultra';
+$_['text_slide2_text'] = 'Pre-order with discount';
+$_['text_slide2_button'] = 'Buy';
+$_['text_tile1_title'] = 'X-TRIKE ME';
+$_['text_tile1_text'] = 'Gaming chairs and peripherals';
+$_['text_tile2_title'] = 'Apple Watch';
+$_['text_tile2_text'] = 'Great watch for a healthy lifestyle';
+$_['text_tile2_price'] = 'from 12 599 ₴';
+$_['text_benefit1_title'] = 'Online / cash on delivery';
+$_['text_benefit1_text'] = 'Convenient payment options at checkout';
+$_['text_benefit2_title'] = 'Delivery Nova Poshta / Ukrposhta';
+$_['text_benefit2_text'] = 'Shipping across Ukraine';
+$_['text_benefit3_title'] = '14-day warranty';
+$_['text_benefit3_text'] = 'Exchange and return without hassle';

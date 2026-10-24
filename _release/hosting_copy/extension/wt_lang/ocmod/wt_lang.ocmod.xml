@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>WT Lang</name>
+  <code>wt_lang</code>
+  <version>1.0.0</version>
+  <author>WT</author>
+  <link></link>
+
+  <!-- Early bootstrap: language prefix (runs even if SEO URLs disabled) -->
+  <file path="catalog/controller/startup/seo_url.php">
+    <operation error="skip">
+      <search><![CDATA[public function index() {
+		// Add rewrite to URL class
+		if ($this->config->get('config_seo_url')) {]]></search>
+      <add position="replace"><![CDATA[public function index(): void {
+		// WT Lang start
+		if ($this->config->get('module_wt_lang_status') && is_dir(DIR_EXTENSION . 'wt_lang/')) {
+			$this->load->controller('extension/wt_lang/module/wt_lang.eventBootstrap');
+		}
+		// WT Lang end
+
+		// Add rewrite to URL class
+		if ($this->config->get('config_seo_url')) {]]></add>
+    </operation>
+  </file>
+
+  <!-- hreflang support in Document -->
+  <file path="system/library/document.php">
+    <operation error="skip">
+      <search><![CDATA[public function addLink(string $href, string $rel): void {
+		$this->links[$href] = [
+			'href' => $href,
+			'rel'  => $rel
+		];
+	}]]></search>
+      <add position="replace"><![CDATA[public function addLink(string $href, string $rel, string $hreflang = ''): void {
+		$key = $hreflang !== '' ? $href . '|' . $hreflang : $href;
+
+		$this->links[$key] = [
+			'href'     => $href,
+			'rel'      => $rel,
+			'hreflang' => $hreflang
+		];
+	}
+
+	/**
+	 * @param string $href
+	 * @param string $hreflang
+	 *
+	 * @return void
+	 */
+	public function addHreflang(string $href, string $hreflang): void {
+		$this->addLink($href, 'alternate', $hreflang);
+	}]]></add>
+    </operation>
+  </file>
+
+  <!-- hreflang attribute in header links -->
+  <file path="catalog/view/template/common/header.twig">
+    <operation error="skip">
+      <search><![CDATA[<link href="{{ link.href }}" rel="{{ link.rel }}"/>]]></search>
+      <add position="replace"><![CDATA[<link href="{{ link.href }}" rel="{{ link.rel }}"{% if link.hreflang is defined and link.hreflang %} hreflang="{{ link.hreflang }}"{% endif %}/>]]></add>
+    </operation>
+  </file>
+
+</modification>

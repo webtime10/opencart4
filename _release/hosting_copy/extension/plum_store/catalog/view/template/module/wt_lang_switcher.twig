@@ -1,0 +1,19 @@
+{% if languages %}
+{% set icon_sprite = plum_icons|default('extension/plum_store/catalog/view/image/plum_store/icons.svg') %}
+<div class="topbar-dd" data-dropdown>
+  <button type="button" class="topbar-dd-btn" aria-expanded="false" aria-haspopup="listbox">
+    <span class="topbar-dd-label" data-dd-label>{% for language in languages %}{% if language.current %}{{ language.code|split('-')|first|upper }}{% endif %}{% endfor %}</span>
+    <svg class="icon icon-chevron" aria-hidden="true"><use href="{{ icon_sprite }}#i-chevron"></use></svg>
+  </button>
+  {% if languages|length > 1 %}
+  <ul class="topbar-dd-menu" role="listbox">
+    {% for language in languages %}
+    {% set item_label = language.code|split('-')|first|upper %}
+    <li>
+      <a href="{{ language.href }}" class="topbar-dd-item{% if language.current %} is-active{% endif %}" data-value="{{ language.code }}" data-label="{{ item_label }}" title="{{ language.name }}">{{ item_label }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}

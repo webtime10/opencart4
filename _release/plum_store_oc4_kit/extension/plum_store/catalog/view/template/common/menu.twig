@@ -1,0 +1,58 @@
+{% if categories %}
+<div class="vmenu" data-vmenu>
+  <ul class="vmenu-list" role="menu">
+    {% for category in categories %}
+    {% set cat_id = 'cat' ~ category.category_id|default(loop.index) %}
+    {% if category.children %}
+    <li class="vmenu-item" role="none" data-vmenu-item="{{ cat_id }}">
+      <a href="{{ category.href }}" role="menuitem">
+        <span class="vmenu-label">{{ category.name }}</span>
+        <span class="vmenu-chev" aria-hidden="true">›</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="vmenu-item vmenu-item--leaf" role="none" data-vmenu-item="{{ cat_id }}" data-vmenu-leaf="1">
+      <a href="{{ category.href }}" role="menuitem">
+        <span class="vmenu-label">{{ category.name }}</span>
+      </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+
+  <div class="vmenu-flyout" data-vmenu-flyout hidden>
+    {% for category in categories %}
+    {% if category.children %}
+    {% set cat_id = 'cat' ~ category.category_id|default(loop.index) %}
+    {% set total = category.children|length %}
+    {% if total > 12 %}
+      {% set batch = (total / 3)|round(0, 'ceil') %}
+    {% elseif total > 6 %}
+      {% set batch = (total / 2)|round(0, 'ceil') %}
+    {% else %}
+      {% set batch = total %}
+    {% endif %}
+    {% set col_batches = category.children|batch(batch) %}
+    {% set col_count = col_batches|length %}
+    <div class="vmenu-panel" data-vmenu-panel="{{ cat_id }}" hidden>
+      <div class="vmenu-cols" style="--vmenu-cols: {{ col_count }};" data-cols="{{ col_count }}">
+        {% for children in col_batches %}
+        <div class="vmenu-col">
+          {% if loop.first %}
+          <h4><a href="{{ category.href }}">{{ category.name }}</a></h4>
+          {% endif %}
+          <ul>
+            {% for child in children %}
+            <li><a href="{{ child.href }}">{{ child.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="vmenu-see-all"><a href="{{ category.href }}">{{ text_all }} {{ category.name }}</a></p>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}

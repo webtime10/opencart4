@@ -1,0 +1,178 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+        <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-module" action="{{ save }}" method="post" data-oc-toggle="ajax">
+          <div class="row mb-3 required">
+            <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" id="input-name" class="form-control"/>
+              <div id="error-name" class="invalid-feedback"></div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <div class="form-check form-switch form-switch-lg">
+                <input type="hidden" name="status" value="0"/>
+                <input type="checkbox" name="status" value="1" class="form-check-input"{% if status %} checked{% endif %}/>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">{{ text_items }}</label>
+            <div class="col-sm-10">
+              <button type="button" id="wt-benefits-add" class="btn btn-success mb-3"><i class="fa-solid fa-plus"></i> {{ button_item_add }}</button>
+              <div id="wt-benefits-empty" class="alert alert-info"{% if items %} style="display:none"{% endif %}>{{ text_no_items }}</div>
+              <div id="wt-benefits-list">
+                {% for item in items %}
+                {% set row = loop.index0 %}
+                <div class="card mb-3 wt-benefits-row" data-row="{{ row }}">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>{{ text_item }} #<span class="wt-row-num">{{ row + 1 }}</span></strong>
+                    <button type="button" class="btn btn-danger btn-sm wt-benefits-remove" title="{{ button_remove }}"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-3 mb-3">
+                        <label class="form-label">{{ entry_image }}</label>
+                        <div class="card" style="width:110px;">
+                          <img src="{{ item.thumb }}" alt="" id="wt-benefits-thumb-{{ row }}" data-oc-placeholder="{{ placeholder }}" class="card-img-top"/>
+                          <input type="hidden" name="item[{{ row }}][image]" value="{{ item.image }}" id="wt-benefits-image-{{ row }}"/>
+                          <div class="card-body p-1">
+                            <button type="button" data-oc-toggle="image" data-oc-target="#wt-benefits-image-{{ row }}" data-oc-thumb="#wt-benefits-thumb-{{ row }}" class="btn btn-primary btn-sm w-100 rounded-0"><i class="fa-solid fa-pencil"></i></button>
+                            <button type="button" data-oc-toggle="clear" data-oc-target="#wt-benefits-image-{{ row }}" data-oc-thumb="#wt-benefits-thumb-{{ row }}" class="btn btn-warning btn-sm w-100 rounded-0"><i class="fa-solid fa-trash"></i></button>
+                          </div>
+                        </div>
+                        <div class="form-text">{{ help_image }}</div>
+                      </div>
+                      <div class="col-md-9">
+                        <ul class="nav nav-tabs">
+                          {% for language in languages %}
+                          <li class="nav-item"><a href="#wt-benefits-lang-{{ row }}-{{ language.language_id }}" data-bs-toggle="tab" class="nav-link{% if loop.first %} active{% endif %}"><img src="{{ language.image }}" title="{{ language.name }}"/> {{ language.name }}</a></li>
+                          {% endfor %}
+                        </ul>
+                        <div class="tab-content pt-3">
+                          {% for language in languages %}
+                          <div id="wt-benefits-lang-{{ row }}-{{ language.language_id }}" class="tab-pane{% if loop.first %} active{% endif %}">
+                            <div class="mb-3">
+                              <label class="form-label">{{ entry_title }}</label>
+                              <input type="text" name="item[{{ row }}][description][{{ language.language_id }}][title]" value="{{ item.description[language.language_id].title is defined ? item.description[language.language_id].title : '' }}" class="form-control"/>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">{{ entry_description }}</label>
+                              <textarea name="item[{{ row }}][description][{{ language.language_id }}][text]" rows="2" class="form-control">{{ item.description[language.language_id].text is defined ? item.description[language.language_id].text : '' }}</textarea>
+                            </div>
+                          </div>
+                          {% endfor %}
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ entry_sort_order }}</label>
+                            <input type="number" name="item[{{ row }}][sort_order]" value="{{ item.sort_order }}" class="form-control"/>
+                          </div>
+                          <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ entry_status }}</label>
+                            <select name="item[{{ row }}][status]" class="form-select">
+                              <option value="1"{% if item.status %} selected{% endif %}>{{ text_enabled }}</option>
+                              <option value="0"{% if not item.status %} selected{% endif %}>{{ text_disabled }}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="module_id" value="{{ module_id }}"/>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}
+<script type="text/javascript"><!--
+(function ($) {
+  var row = {{ items|length }};
+  var placeholder = {{ placeholder|json_encode|raw }};
+  var textItem = {{ text_item|json_encode|raw }};
+  var languages = [
+    {% for language in languages %}
+    { id: {{ language.language_id }}, name: {{ language.name|json_encode|raw }}, image: {{ language.image|json_encode|raw }} }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  function renumber() {
+    $('#wt-benefits-list .wt-benefits-row').each(function (i) {
+      $(this).find('.wt-row-num').text(i + 1);
+    });
+    $('#wt-benefits-empty').toggle($('#wt-benefits-list .wt-benefits-row').length === 0);
+  }
+
+  function langTabs(r) {
+    var tabs = '<ul class="nav nav-tabs">';
+    var panes = '<div class="tab-content pt-3">';
+    languages.forEach(function (lang, i) {
+      tabs += '<li class="nav-item"><a href="#wt-benefits-lang-' + r + '-' + lang.id + '" data-bs-toggle="tab" class="nav-link' + (i === 0 ? ' active' : '') + '"><img src="' + lang.image + '" title="' + lang.name + '"/> ' + lang.name + '</a></li>';
+      panes += '<div id="wt-benefits-lang-' + r + '-' + lang.id + '" class="tab-pane' + (i === 0 ? ' active' : '') + '">';
+      panes += '<div class="mb-3"><label class="form-label">{{ entry_title|e('js') }}</label>';
+      panes += '<input type="text" name="item[' + r + '][description][' + lang.id + '][title]" value="" class="form-control"/></div>';
+      panes += '<div class="mb-3"><label class="form-label">{{ entry_description|e('js') }}</label>';
+      panes += '<textarea name="item[' + r + '][description][' + lang.id + '][text]" rows="2" class="form-control"></textarea></div></div>';
+    });
+    tabs += '</ul>';
+    panes += '</div>';
+    return tabs + panes;
+  }
+
+  $('#wt-benefits-add').on('click', function () {
+    var r = row++;
+    var html = '';
+    html += '<div class="card mb-3 wt-benefits-row" data-row="' + r + '">';
+    html += '<div class="card-header d-flex justify-content-between align-items-center">';
+    html += '<strong>' + textItem + ' #<span class="wt-row-num"></span></strong>';
+    html += '<button type="button" class="btn btn-danger btn-sm wt-benefits-remove"><i class="fa-solid fa-trash"></i></button></div>';
+    html += '<div class="card-body"><div class="row"><div class="col-md-3 mb-3">';
+    html += '<label class="form-label">{{ entry_image|e('js') }}</label>';
+    html += '<div class="card" style="width:110px;">';
+    html += '<img src="' + placeholder + '" alt="" id="wt-benefits-thumb-' + r + '" data-oc-placeholder="' + placeholder + '" class="card-img-top"/>';
+    html += '<input type="hidden" name="item[' + r + '][image]" value="" id="wt-benefits-image-' + r + '"/>';
+    html += '<div class="card-body p-1">';
+    html += '<button type="button" data-oc-toggle="image" data-oc-target="#wt-benefits-image-' + r + '" data-oc-thumb="#wt-benefits-thumb-' + r + '" class="btn btn-primary btn-sm w-100 rounded-0"><i class="fa-solid fa-pencil"></i></button>';
+    html += '<button type="button" data-oc-toggle="clear" data-oc-target="#wt-benefits-image-' + r + '" data-oc-thumb="#wt-benefits-thumb-' + r + '" class="btn btn-warning btn-sm w-100 rounded-0"><i class="fa-solid fa-trash"></i></button>';
+    html += '</div></div><div class="form-text">{{ help_image|e('js') }}</div></div>';
+    html += '<div class="col-md-9">' + langTabs(r);
+    html += '<div class="row"><div class="col-md-6 mb-3"><label class="form-label">{{ entry_sort_order|e('js') }}</label>';
+    html += '<input type="number" name="item[' + r + '][sort_order]" value="' + r + '" class="form-control"/></div>';
+    html += '<div class="col-md-6 mb-3"><label class="form-label">{{ entry_status|e('js') }}</label>';
+    html += '<select name="item[' + r + '][status]" class="form-select"><option value="1" selected>{{ text_enabled|e('js') }}</option><option value="0">{{ text_disabled|e('js') }}</option></select></div></div>';
+    html += '</div></div></div></div>';
+    $('#wt-benefits-list').append(html);
+    renumber();
+  });
+
+  $('#wt-benefits-list').on('click', '.wt-benefits-remove', function () {
+    $(this).closest('.wt-benefits-row').remove();
+    renumber();
+  });
+})(jQuery);
+//--></script>

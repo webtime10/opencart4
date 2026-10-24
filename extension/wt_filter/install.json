@@ -1,7 +1,7 @@
 {
-  "name": "WT Filter",
-  "description": "WT Filter for OpenCart 4: full storefront filter, SEO landings, live index via Events (ported from OC3).",
-  "version": "1.1.0",
-  "author": "WT",
-  "link": ""
+    "name": "WT Filter",
+    "description": "WT Filter for OpenCart 4: full storefront filter, SEO landings, live index via Events (ported from OC3).",
+    "version": "1.1.0",
+    "author": "WT",
+    "link": "https://opencart4.loc/"
 }

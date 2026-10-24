@@ -15,6 +15,7 @@ $_['text_content_top']    = 'Contenu haut';
 $_['text_content_bottom'] = 'Contenu bas';
 $_['text_column_left']    = 'Colonne gauche';
 $_['text_column_right']   = 'Colonne droite';
+$_['text_menu']           = 'Menu en-tête';
 
 // Colonne
 $_['column_name']         = 'Nom de la mise en page';

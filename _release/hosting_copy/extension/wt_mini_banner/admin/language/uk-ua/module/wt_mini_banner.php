@@ -1,0 +1,26 @@
+<?php
+$_['heading_title'] = 'WT Mini Banner';
+$_['text_extension'] = 'Розширення';
+$_['text_success'] = 'Готово: модуль WT Mini Banner збережено!';
+$_['text_edit'] = 'Редагування WT Mini Banner';
+$_['text_enabled'] = 'Увімкнено';
+$_['text_disabled'] = 'Вимкнено';
+$_['text_items'] = 'Банери';
+$_['text_item'] = 'Банер';
+$_['text_no_items'] = 'Банерів ще немає. Натисніть «Додати банер».';
+$_['entry_name'] = 'Назва модуля';
+$_['entry_status'] = 'Статус';
+$_['entry_title'] = 'Заголовок';
+$_['entry_description'] = 'Опис';
+$_['entry_image'] = 'Фото';
+$_['entry_percent'] = 'Відсотки / бейдж';
+$_['entry_product'] = 'Посилання на товар';
+$_['entry_sort_order'] = 'Порядок';
+$_['help_percent'] = 'Приклад: -40% або 40. Порожньо — без бейджа.';
+$_['help_product'] = 'Введіть мінімум 2 літери для пошуку товару.';
+$_['button_item_add'] = 'Додати банер';
+$_['button_remove'] = 'Видалити';
+$_['button_save'] = 'Зберегти';
+$_['button_back'] = 'Назад';
+$_['error_permission'] = 'Немає прав на зміну WT Mini Banner!';
+$_['error_name'] = 'Назва модуля має бути від 3 до 64 символів!';

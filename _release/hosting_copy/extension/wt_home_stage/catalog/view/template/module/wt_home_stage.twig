@@ -1,0 +1,76 @@
+<section class="home-stage">
+  <div class="container">
+    <div class="home-grid">
+      <aside class="home-menu">{{ menu }}</aside>
+      <div class="home-main">
+        <div class="home-banners">
+          {% if big_banner %}
+            {{ big_banner }}
+          {% else %}
+          <div class="home-slider" data-home-slider>
+            <button type="button" class="home-slider-nav is-prev" data-home-prev aria-label="Prev">‹</button>
+            <div class="home-slider-track">
+              {% for slide in slides %}
+              <article class="home-slide{% if loop.first %} is-active{% endif %}"{% if slide.image %} style="background-image:url('{{ slide.image }}')"{% endif %}>
+                <div class="home-slide-body">
+                  <small>{{ slide.eyebrow }}</small>
+                  <h2>{{ slide.title }}</h2>
+                  <p>{{ slide.text }}</p>
+                  <a class="btn btn-primary btn-sm" href="{{ slide.href }}">{{ slide.button }}</a>
+                </div>
+              </article>
+              {% endfor %}
+            </div>
+            <button type="button" class="home-slider-nav is-next" data-home-next aria-label="Next">›</button>
+          </div>
+          {% endif %}
+          <div class="home-side">
+            {% if mini_banner %}
+              {{ mini_banner }}
+            {% else %}
+              {% for tile in tiles %}
+              <a class="home-tile {{ tile.class }}" href="{{ tile.href }}"{% if tile.image %} style="background-image:url('{{ tile.image }}')"{% endif %}>
+                {% if tile.badge %}<span class="home-tile-badge">{{ tile.badge }}</span>{% endif %}
+                <strong>{{ tile.title }}</strong>
+                <span>{{ tile.text }}</span>
+                {% if tile.price %}<em>{{ tile.price }}</em>{% endif %}
+              </a>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="benefits-bar">
+  <div class="container">
+    <div class="benefits">
+      {% for benefit in benefits %}
+      <div class="benefit">
+        <svg class="icon icon-lg"><use href="{{ icons }}#{{ benefit.icon }}"></use></svg>
+        <div>
+          <strong>{{ benefit.title }}</strong>
+          <span>{{ benefit.text }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% if not big_banner %}
+<script>
+(function ($) {
+  var $root = $("[data-home-slider]").first();
+  if (!$root.length) return;
+  var $slides = $root.find(".home-slide");
+  var i = 0;
+  function go(n) {
+    i = (n + $slides.length) % $slides.length;
+    $slides.removeClass("is-active").eq(i).addClass("is-active");
+  }
+  $root.on("click", "[data-home-prev]", function () { go(i - 1); });
+  $root.on("click", "[data-home-next]", function () { go(i + 1); });
+})(jQuery);
+</script>
+{% endif %}
